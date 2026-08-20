@@ -1,3 +1,5 @@
+![Company Logo](./public/azentraNamed.png)
+
 # Azentra Global’s Event Management and Reporting System 
 
 This application manages workshops and courses across colleges. Admins create events, students access assigned events and submit feedback, and resource persons monitor performance. The system also generates downloadable PDF reports for efficient tracking and analysis.
