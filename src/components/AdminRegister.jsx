@@ -1,22 +1,35 @@
-import { Box, Card, CardContent, CircularProgress, Grid, Typography } from '@mui/material'
+import { Alert, Box, Card, CardContent, CircularProgress, Grid, Snackbar, Typography } from '@mui/material'
 import { COLORS } from '../assets/utils/colors'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { InputField } from '../assets/utils/InputField'
+import { ButtonX } from '../assets/utils/ButtonX'
 
 export const AdminRegister = () => {
     const navigate = useNavigate()
 
-    const [adminId, setAdminId] = useState('')
+    const [adminEmail, setAdminEmail] = useState('')
     const [secret, setSecret] = useState('')
     const [qr, setQr] = useState('')
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [showSetup, setShowSetup] = useState(false)
 
-    const [timeLeft, setTimeLeft] = useState(600)
+    const [timeLeft, setTimeLeft] = useState(180)
 
-    useEffect(() => { fetchSetup() }, [])
+    // snackbar
+    const [openSnackbar, setOpenSnackbar] = useState(false)
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
+
+    const handleCloseSnackbar = (_, reason) => {
+        if (reason === 'clickaway') return
+        setOpenSnackbar(false)
+    }
 
     useEffect(() => {
+        if (!showSetup) return
+
         if (timeLeft <= 0) {
             navigate("/admin/login")
             return
@@ -27,16 +40,33 @@ export const AdminRegister = () => {
         }, 1000);
 
         return () => clearInterval(timer)
-    }, [timeLeft, navigate])
+    }, [timeLeft, navigate, showSetup])
 
     const fetchSetup = async () => {
+        if (!adminEmail) {
+            setSuccess('')
+            setError("Please enter your email")
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (!adminEmail.endsWith('@azentraglobal.com')) {
+            setSuccess('')
+            setError("Please enter a valid email")
+            setOpenSnackbar(true)
+            return
+        }
+        setLoading(true)
         try {
-            const response = await axios.post("http://localhost:5000/api/admin/auth/setup")
-            setAdminId(response.data.admin_id)
+            const response = await axios.post("http://localhost:5000/api/admin/auth/setup", { admin_email: adminEmail })
             setSecret(response.data.secret)
             setQr(response.data.qr)
+            setTimeLeft(180)
+            setShowSetup(true)
         } catch (error) {
-            console.error(error)
+            setSuccess('')
+            setError(error.response?.data?.message || "Something went wrong")
+            setOpenSnackbar(true)
         } finally {
             setLoading(false)
         }
@@ -74,7 +104,7 @@ export const AdminRegister = () => {
                                                             color: COLORS.secondaryText, textAlign: 'center',
                                                             fontSize: { lg: 20, md: 20, sm: 18, xs: 15 }
                                                         }}>
-                                                            Scan QR to setup authentication
+                                                            {!showSetup ? "Enter email to register" : "Scan QR to setup authentication"}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid><br />
@@ -88,14 +118,32 @@ export const AdminRegister = () => {
                                                                     </Box>
                                                                 </Grid>
                                                             </Grid>
+                                                        ) : !showSetup ? (
+                                                            <Grid container spacing={2}>
+                                                                <Grid size={12}>
+                                                                    <Box sx={{ width: '100%' }}>
+                                                                        <InputField placeholder={"Username or email"} theme={COLORS}
+                                                                            value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} />
+                                                                    </Box>
+                                                                </Grid>
+                                                                <Grid size={12}>
+                                                                    <Box sx={{ width: '100%' }}>
+                                                                        <Grid size={12}>
+                                                                            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                                                                                <ButtonX name={loading ? "VERIFYING..." : "CONTINUE"} theme={COLORS} onClick={fetchSetup} />
+                                                                            </Box>
+                                                                        </Grid>
+                                                                    </Box>
+                                                                </Grid>
+                                                            </Grid>
                                                         ) : (
                                                             <Grid container>
                                                                 <Grid size={12}>
-                                                                    <Box sx={{display: 'flex', gap: 2, justifyContent: 'center'}}>
+                                                                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
                                                                         <Typography sx={{
                                                                             color: COLORS.primaryText
                                                                         }}>
-                                                                            Admin ID
+                                                                            Admin Email
                                                                         </Typography>
                                                                         <Typography>
                                                                             &#8211;
@@ -103,7 +151,7 @@ export const AdminRegister = () => {
                                                                         <Typography sx={{
                                                                             color: COLORS.secondaryText
                                                                         }}>
-                                                                            {adminId}
+                                                                            {adminEmail}
                                                                         </Typography>
                                                                     </Box>
                                                                 </Grid>
@@ -119,9 +167,9 @@ export const AdminRegister = () => {
                                                                     </Typography>
                                                                 </Grid>
                                                                 <Grid size={12}>
-                                                                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                                                        <Box component="img" src={`data:image/png;base64,${qr}`} alt="Authenticator QR" 
-                                                                        sx={{height: '250px', width: '250px'}}/>
+                                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                                        <Box component="img" src={`data:image/png;base64,${qr}`} alt="Authenticator QR"
+                                                                            sx={{ height: '250px', width: '250px' }} />
                                                                     </Box>
                                                                 </Grid>
                                                                 <Grid size={12}>
@@ -153,6 +201,14 @@ export const AdminRegister = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} variant='filled' severity={error ? 'error' : 'success'}
+                    sx={{
+                        backgroundColor: error ? COLORS.error : COLORS.success
+                    }}>
+                    {error || success}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }

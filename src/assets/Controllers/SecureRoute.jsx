@@ -8,5 +8,5 @@ export const SecureRoute = ({ children }) => {
     const isAdminRoute = location.pathname === "/admin/login" || location.pathname === "/admin/auth/setup"
 
     return !token && !isAdminRoute ? <Navigate to='/login' replace /> : 
-    role === "admin" && location.pathname === "/" ? <Navigate to='/admin/home' replace /> : children
+    role === "admin" && location.pathname === "/" ? <Navigate to='/admin/' replace /> : children
 }

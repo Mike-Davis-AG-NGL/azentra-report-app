@@ -118,7 +118,7 @@ export const Login = () => {
                                                             fontWeight: 'bolder', fontStyle: 'italic', color: COLORS.primaryText,
                                                             fontSize: { lg: 40, md: 40, sm: 35, xs: 25 }, textAlign: 'center'
                                                         }}>
-                                                            Attendance
+                                                            Azentra
                                                         </Typography>
                                                     </Grid>
                                                     <Grid size={12}>
@@ -126,7 +126,7 @@ export const Login = () => {
                                                             color: COLORS.secondaryText, textAlign: 'center',
                                                             fontSize: { lg: 20, md: 20, sm: 18, xs: 15 }
                                                         }}>
-                                                            Tracking application
+                                                            Report App
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -148,9 +148,9 @@ export const Login = () => {
                                                                 backgroundColor: COLORS.accentHover, color: COLORS.primaryAccent
                                                             }
                                                         }}>teacher</Button>
-                                                        <Button onClick={() => setRole("admin")} sx={{
-                                                            backgroundColor: role === "admin" ? COLORS.accentHover : COLORS.primaryAccent,
-                                                            color: role === "admin" ? COLORS.primaryAccent : COLORS.primaryText, fontWeight: 'bold',
+                                                        <Button onClick={() => setRole("student")} sx={{
+                                                            backgroundColor: role === "student" ? COLORS.accentHover : COLORS.primaryAccent,
+                                                            color: role === "student" ? COLORS.primaryAccent : COLORS.primaryText, fontWeight: 'bold',
                                                             '&:hover': {
                                                                 backgroundColor: COLORS.accentHover, color: COLORS.primaryAccent
                                                             }

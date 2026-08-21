@@ -16,7 +16,7 @@ export const AdminLogin = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
 
-    const [adminId, setAdminId] = useState('')
+    const [adminEmail, setAdminEmail] = useState('')
     const [otp, setOtp] = useState('')
 
     // snackbar
@@ -33,8 +33,8 @@ export const AdminLogin = () => {
         setError('')
         setSuccess('')
 
-        if (!adminId || !otp) {
-            setError("Admin ID and OTP are required")
+        if (!adminEmail || !otp) {
+            setError("Admin Email and OTP are required")
             setOpenSnackbar(true)
             return
         }
@@ -42,7 +42,7 @@ export const AdminLogin = () => {
 
         try {
             const response = await axios.post("http://localhost:5000/api/admin/login",{
-                admin_id: adminId,
+                admin_email: adminEmail,
                 otp
             })
 
@@ -55,7 +55,7 @@ export const AdminLogin = () => {
 
                 setSuccess("Login Successful")
                 setOpenSnackbar(true)
-                navigate("/admin/home")
+                navigate("/admin/")
             }
         } catch (error) {
             setSuccess('')
@@ -112,7 +112,7 @@ export const AdminLogin = () => {
                                                             fontWeight: 'bolder', fontStyle: 'italic', color: COLORS.primaryText,
                                                             fontSize: { lg: 40, md: 40, sm: 35, xs: 25 }, textAlign: 'center'
                                                         }}>
-                                                            Attendance
+                                                            Azentra
                                                         </Typography>
                                                     </Grid>
                                                     <Grid size={12}>
@@ -120,7 +120,7 @@ export const AdminLogin = () => {
                                                             color: COLORS.secondaryText, textAlign: 'center',
                                                             fontSize: { lg: 20, md: 20, sm: 18, xs: 15 }
                                                         }}>
-                                                            Tracking application
+                                                            Report App
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -129,8 +129,8 @@ export const AdminLogin = () => {
                                     </Grid>
                                     <Grid size={12}>
                                         <Box sx={{ width: '100%', pt: 2 }}>
-                                            <InputField placeholder={"Enter Admin ID"} theme={COLORS} 
-                                            onChange={(e) => setAdminId(e.target.value)} value={adminId}/>
+                                            <InputField placeholder={"Enter Admin Email"} theme={COLORS} 
+                                            onChange={(e) => setAdminEmail(e.target.value)} value={adminEmail}/>
                                         </Box>
                                         <Box sx={{ width: '100%', pt: 2 }}>
                                             <InputField placeholder={"Enter OTP from authenticator"} theme={COLORS} 

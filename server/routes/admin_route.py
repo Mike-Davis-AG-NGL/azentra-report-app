@@ -10,36 +10,27 @@ from flask_jwt_extended import create_access_token
 from config.database import db
 from models.admin import Admin
 
-def generate_id():
-    while True:
-        admin_id = f"ADM{random.randint(10000, 99999)}"
-
-        exists = Admin.query.filter_by(admin_id = admin_id).first()
-
-        if not exists:
-            return admin_id
-
 admin_auth = Blueprint("admin_auth", __name__)
 
 @admin_auth.post("/login")
 def admin_auth_otp():
     data = request.get_json()
 
-    admin_id = data.get("admin_id")
+    admin_email = data.get("admin_email")
     otp = data.get("otp")
 
-    if not admin_id or not otp:
+    if not admin_email or not otp:
         return {
             "success": False,
-            "message": "Admin ID and OTP required for authentication"
+            "message": "Admin Email and OTP required for authentication"
         }, 400
     
-    admin = Admin.query.filter_by(admin_id = admin_id).first()
+    admin = Admin.query.filter_by(admin_email = admin_email).first()
 
     if not admin:
         return {
             "success": False,
-            "message": "Invalid Admin ID"
+            "message": "Invalid Admin Email"
         }, 404
     
     totp = pyotp.TOTP(
@@ -63,19 +54,35 @@ def admin_auth_otp():
         "token": token,
         "user": {
             "id": admin.id,
-            "admin_id": admin.admin_id,
+            "email": admin.admin_email,
             "role": admin.role
         }
     }, 200
 
 @admin_auth.post("/auth/setup")
 def admin_auth_setup():
-    admin_id = generate_id()
+    data = request.get_json()
+
+    admin_email = data.get("admin_email")
+
+    if not admin_email:
+        return {
+            "success": False,
+            "message": "Email is required"
+        }, 400
+    
+    existing_admin = Admin.query.filter_by(admin_email = admin_email).first()
+
+    if existing_admin:
+        return {
+            "success": False,
+            "message": "this email is already registered"
+        }, 409
 
     secret = pyotp.random_base32()
 
     admin = Admin(
-        admin_id = admin_id,
+        admin_email = admin_email,
         totp_secret = secret
     )
 
@@ -90,8 +97,8 @@ def admin_auth_setup():
     )
 
     uri = totp.provisioning_uri(
-        name = admin_id,
-        issuer_name = "AT by Mike Admin"
+        name = admin_email,
+        issuer_name = "AG Report Admin"
     )
 
     img = qrcode.make(uri)
@@ -105,7 +112,7 @@ def admin_auth_setup():
     return {
         "success": True,
         "message": "Authenticator setup generated successfully",
-        "admin_id": admin_id,
+        "email": admin_email,
         "secret": secret,
         "qr": qr,
     }, 201

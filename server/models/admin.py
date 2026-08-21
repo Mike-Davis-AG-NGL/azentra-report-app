@@ -14,8 +14,8 @@ class Admin(db.Model):
         nullable = False
     )
 
-    admin_id = db.Column(
-        db.String(8),
+    admin_email = db.Column(
+        db.String(150),
         nullable = False,
         unique = True
     )
