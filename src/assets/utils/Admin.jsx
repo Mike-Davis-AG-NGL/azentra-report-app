@@ -1,31 +1,29 @@
 // import React from 'react'
-import { Box, Grid } from "@mui/material"
-import teacher from '../images/card-teacher.jpg'
-import student from '../images/card-student.jpg'
-import classroom from '../images/card-classroom.jpg'
-import { CardUI } from "./CardUI"
+import { Box, Grid, Typography } from "@mui/material"
+import { COLORS } from "./colors"
 
 export const Admin = () => {
   return (
-    <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', height: { lg: '80dvh', md: '80dvh' }, width: '100%' }}>
+    <Box sx={{ flexGrow: 1 }}>
       <Grid container>
-        <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }} sx={{ p: { lg: 2, md: 1, sm: 2, xs: 2 }, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <CardUI img={teacher} 
-          title="Resource Persons" subtitle="Management"
-          name1="Add Teacher" name2="manage teacher" 
-          path1={'/admin/add/teacher'} />
+        <Grid size={12}>
+          <Box sx={{ flexGrow: 1, p: 2 }}>
+            <Grid container>
+              <Grid size={6}>
+                <Box sx={{ fontWeight: 'bold', fontStyle:'italic', color: COLORS.primaryText,
+                  fontSize: { lg: 25, md: 25, sm: 20, xs: 15 }
+                }}>
+                  Admin name
+                </Box>
+              </Grid>
+              <Grid size={6}>
+                
+              </Grid>
+            </Grid>
+          </Box>
         </Grid>
-        <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }} sx={{ p: { lg: 2, md: 1, sm: 2, xs: 2 }, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <CardUI img={student} 
-          title="Students" subtitle="Management"
-          name1="Add Student" name2="manage student" 
-          path1={'/admin/add/student'} />
-        </Grid>
-        <Grid size={{ lg: 4, md: 4, sm: 12, xs: 12 }} sx={{ p: { lg: 2, md: 1, sm: 2, xs: 2 }, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <CardUI img={classroom} 
-          title="Events" subtitle="Management"
-          name1="Add class" name2="manage class" 
-          path1={'/admin/add/class'} />
+        <Grid size={12}>
+
         </Grid>
       </Grid>
     </Box>

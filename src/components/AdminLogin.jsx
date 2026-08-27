@@ -141,8 +141,8 @@ export const AdminLogin = () => {
                             </CardContent><br />
                             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
                                 <ButtonX name={loading ? "LOGGING..." : "LOGIN"} theme={COLORS} onClick={handleLogin} disabled={loading}/>
-                            </CardActions>
-                            <CardContent sx={{ pb: 0 }}>
+                            </CardActions><br />
+                            {/* <CardContent sx={{ pb: 0 }}>
                                 <Box sx={{ textAlign: 'center', color: COLORS.secondaryText }}>
                                     For Teacher/Student Login <Link href="/login" sx={{
                                         color: COLORS.primaryText, textDecoration: 'none',
@@ -151,7 +151,7 @@ export const AdminLogin = () => {
                                         }
                                     }}>Click Here</Link>
                                 </Box>
-                            </CardContent>
+                            </CardContent> */}
                         </Card>
                     </Box>
                 </Grid>

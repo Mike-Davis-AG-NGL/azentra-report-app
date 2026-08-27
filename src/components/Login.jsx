@@ -15,9 +15,18 @@ import { useNavigate } from "react-router-dom"
 export const Login = () => {
     const navigate = useNavigate()
     const [role, setRole] = useState("teacher")
+
+    // Students field
+    const [regNum, setRegNum] = useState('')
+    const [stdName, setStdName] = useState('')
+    const [dept, setDept] = useState('')
+    const [clg, setClg] = useState('')
+
+    // resource person/teacher field
     const [username, setUsername] = useState('')
     const [password, SetPassword] = useState('')
     const [remember, setRemember] = useState(false)
+
     const [loading, setLoading] = useState(false)
 
     const image = role === "teacher" ? teacher : student
@@ -147,7 +156,7 @@ export const Login = () => {
                                                             '&:hover': {
                                                                 backgroundColor: COLORS.accentHover, color: COLORS.primaryAccent
                                                             }
-                                                        }}>teacher</Button>
+                                                        }}>trainer</Button>
                                                         <Button onClick={() => setRole("student")} sx={{
                                                             backgroundColor: role === "student" ? COLORS.accentHover : COLORS.primaryAccent,
                                                             color: role === "student" ? COLORS.primaryAccent : COLORS.primaryText, fontWeight: 'bold',
@@ -159,30 +168,62 @@ export const Login = () => {
                                                 </Box>
                                             </Box>
                                         </Grid>
-                                        <Grid size={12}>
-                                            <Box sx={{ width: '100%' }}>
-                                                <InputField placeholder={"Username or email"} theme={COLORS}
-                                                    value={username} onChange={(e) => setUsername(e.target.value)} />
-                                            </Box>
-                                        </Grid>
-                                        <Grid size={12}>
-                                            <Box sx={{ width: '100%' }}>
-                                                <InputField placeholder={"Password"} theme={COLORS} mode="password"
-                                                    value={password} onChange={(e) => SetPassword(e.target.value)} />
-                                            </Box>
-                                        </Grid>
-                                        <Grid size={12}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <CheckBox theme={COLORS} value={remember} setValue={setRemember} /> Remember Me
-                                            </Box>
-                                        </Grid>
+                                        {role === 'teacher' && (
+                                            <>
+                                                <Grid size={12}>
+                                                    <Box sx={{ width: '100%' }}>
+                                                        <InputField placeholder={"Email"} theme={COLORS}
+                                                            value={username} onChange={(e) => setUsername(e.target.value)} />
+                                                    </Box>
+                                                </Grid>
+                                                <Grid size={12}>
+                                                    <Box sx={{ width: '100%' }}>
+                                                        <InputField placeholder={"Password"} theme={COLORS} mode="password"
+                                                            value={password} onChange={(e) => SetPassword(e.target.value)} />
+                                                    </Box>
+                                                </Grid>
+                                                <Grid size={12}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <CheckBox theme={COLORS} value={remember} setValue={setRemember} /> Remember Me
+                                                    </Box>
+                                                </Grid>
+                                            </>
+                                        )}
+                                        {role === 'student' && (
+                                            <>
+                                                <Grid size={12}>
+                                                    <Box sx={{ width: '100%' }}>
+                                                        <InputField placeholder={"Register Number"} theme={COLORS}
+                                                            value={regNum} onChange={(e) => setRegNum(e.target.value)} />
+                                                    </Box>
+                                                </Grid>
+                                                <Grid size={12}>
+                                                    <Box sx={{ width: '100%' }}>
+                                                        <InputField placeholder={"Name"} theme={COLORS}
+                                                            value={stdName} onChange={(e) => setStdName(e.target.value)} />
+                                                    </Box>
+                                                </Grid>
+                                                <Grid size={12}>
+                                                    <Box sx={{ width: '100%' }}>
+                                                        <InputField placeholder={"Department"} theme={COLORS}
+                                                            value={dept} onChange={(e) => setDept(e.target.value)} />
+                                                    </Box>
+                                                </Grid>
+                                                <Grid size={12}>
+                                                    <Box sx={{ width: '100%' }}>
+                                                        <InputField placeholder={"College"} theme={COLORS} 
+                                                            value={clg} onChange={(e) => setClg(e.target.value)} />
+                                                    </Box>
+                                                </Grid>
+                                            </>
+                                        )}
                                     </Grid>
                                 </Box>
                             </CardContent><br />
                             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
                                 <ButtonX name={loading ? "LOGGING..." : "LOGIN"} theme={COLORS} onClick={handleLogin} />
-                            </CardActions>
-                            <CardContent sx={{ pb: 0 }}>
+                            </CardActions><br />
+                            {/* <CardContent sx={{ pb: 0 }}>
                                 <Box sx={{ textAlign: 'center', color: COLORS.secondaryText }}>
                                     For Admin Login <Link href="/admin/login" sx={{
                                         color: COLORS.primaryText, textDecoration: 'none',
@@ -191,7 +232,7 @@ export const Login = () => {
                                         }
                                     }}>Click Here</Link>
                                 </Box>
-                            </CardContent>
+                            </CardContent> */}
                         </Card>
                     </Box>
                 </Grid>
