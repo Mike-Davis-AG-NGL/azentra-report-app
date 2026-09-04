@@ -8,7 +8,6 @@ import { COLORS } from "../assets/utils/colors"
 import { useState } from "react"
 import { ButtonX } from "../assets/utils/ButtonX"
 import { InputField } from "../assets/utils/InputField"
-import { Admin } from '../assets/utils/Admin'
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 

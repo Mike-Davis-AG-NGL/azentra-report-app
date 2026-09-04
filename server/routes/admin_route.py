@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-import random
 import io
 import base64
 import qrcode
@@ -116,3 +115,47 @@ def admin_auth_setup():
         "secret": secret,
         "qr": qr,
     }, 201
+
+@admin_auth.post('/auth/setup/verify')
+def admin_auth_setup_verify():
+    data = request.get_json()
+
+    admin_email = data.get("admin_email")
+    otp = data.get("otp")
+
+    if not admin_email or not otp:
+        return {
+            "success": False,
+            "message": "Admin Email and OTP required for authentication"
+        }, 400
+    
+    admin = Admin.query.filter_by(admin_email = admin_email).first()
+
+    if not admin:
+        return {
+            "success": False,
+            "message": "Invalid Admin Email"
+        }, 404
+    
+    totp = pyotp.TOTP(
+        admin.totp_secret,
+        digits = 8,
+        interval = 30,
+        digest = hashlib.sha512
+    )
+
+    if not totp.verify(otp):
+        return {
+            "success": False,
+            "message": "Invalid OTP"
+        }, 401
+
+    return {
+        "success": True,
+        "message": "Verification successfull",
+        "user": {
+            "id": admin.id,
+            "email": admin.admin_email,
+            "role": admin.role
+        }
+    }, 200

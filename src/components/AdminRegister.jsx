@@ -1,10 +1,11 @@
 import { Alert, Box, Card, CardContent, CircularProgress, Grid, Snackbar, Typography } from '@mui/material'
 import { COLORS } from '../assets/utils/colors'
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { InputField } from '../assets/utils/InputField'
 import { ButtonX } from '../assets/utils/ButtonX'
+import { InputFieldVerify } from '../assets/utils/Admin/InputFieldVerify'
+import { useNavigate } from 'react-router-dom'
 
 export const AdminRegister = () => {
     const navigate = useNavigate()
@@ -14,8 +15,7 @@ export const AdminRegister = () => {
     const [qr, setQr] = useState('')
     const [loading, setLoading] = useState(false)
     const [showSetup, setShowSetup] = useState(false)
-
-    const [timeLeft, setTimeLeft] = useState(180)
+    const [otp, setotp] = useState('')
 
     // snackbar
     const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -26,21 +26,6 @@ export const AdminRegister = () => {
         if (reason === 'clickaway') return
         setOpenSnackbar(false)
     }
-
-    useEffect(() => {
-        if (!showSetup) return
-
-        if (timeLeft <= 0) {
-            navigate("/admin/login")
-            return
-        }
-
-        const timer = setInterval(() => {
-            setTimeLeft(prev => prev - 1)
-        }, 1000);
-
-        return () => clearInterval(timer)
-    }, [timeLeft, navigate, showSetup])
 
     const fetchSetup = async () => {
         if (!adminEmail) {
@@ -61,7 +46,6 @@ export const AdminRegister = () => {
             const response = await axios.post("http://localhost:5000/api/admin/auth/setup", { admin_email: adminEmail })
             setSecret(response.data.secret)
             setQr(response.data.qr)
-            setTimeLeft(180)
             setShowSetup(true)
         } catch (error) {
             setSuccess('')
@@ -72,8 +56,30 @@ export const AdminRegister = () => {
         }
     }
 
-    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0")
-    const seconds = String(timeLeft % 60).padStart(2, "0")
+    const verifyOTP = async () => {
+        if (!otp) {
+            setSuccess('')
+            setError('Please enter the OTP')
+            setOpenSnackbar(true)
+            return
+        }
+
+        setLoading(true)
+
+        try {
+            await axios.post('http://localhost:5000/api/admin/auth/setup/verify', {
+                admin_email: adminEmail,
+                otp
+            })
+            navigate('/admin/login')
+        } catch (error) {
+            setSuccess('')
+            setError(error.response?.data?.message || "Invalid OTP")
+            setOpenSnackbar(true)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -156,17 +162,6 @@ export const AdminRegister = () => {
                                                                     </Box>
                                                                 </Grid>
                                                                 <Grid size={12}>
-                                                                    <Typography
-                                                                        sx={{
-                                                                            fontWeight: "bold",
-                                                                            color: COLORS.mutedText,
-                                                                            textAlign: "center"
-                                                                        }}
-                                                                    >
-                                                                        Expires in {minutes}:{seconds}
-                                                                    </Typography>
-                                                                </Grid>
-                                                                <Grid size={12}>
                                                                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                                                         <Box component="img" src={`data:image/png;base64,${qr}`} alt="Authenticator QR"
                                                                             sx={{ height: '250px', width: '250px' }} />
@@ -187,6 +182,22 @@ export const AdminRegister = () => {
                                                                     }}>
                                                                         {secret}
                                                                     </Typography>
+                                                                </Grid>
+                                                                <Grid size={12}>
+                                                                    <br />
+                                                                    <Box>
+                                                                        <Typography sx={{
+                                                                            fontWeight: 'bold',
+                                                                            color: COLORS.primaryText,
+                                                                            textAlign: 'center'
+                                                                        }}>
+                                                                            Enter the OTP from the Authenticator app to verify
+                                                                        </Typography><br />
+                                                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                                            <InputFieldVerify value={otp} onVerify={verifyOTP}
+                                                                            onChange={(e) => setotp(e.target.value)} loading={loading}/>
+                                                                        </Box>
+                                                                    </Box>
                                                                 </Grid>
                                                             </Grid>
                                                         )}

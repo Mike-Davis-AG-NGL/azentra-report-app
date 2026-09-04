@@ -1,16 +1,18 @@
-import { Box, Divider, Drawer, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
+import { Box, Drawer, Grid } from "@mui/material"
 import logo from "../images/logo.png"
-import { COLORS } from "./colors"
+import { COLORS, DARKCOLORS } from "./colors"
 import { MenuUI } from "./MenuUI"
 import { useContext, useState } from "react"
-import { Assessment, CoPresent, DarkMode, Dashboard, Event, LightMode, Logout } from "@mui/icons-material"
 import { NavbarWrapper } from "./styledComponent"
 import { useNavigate } from "react-router-dom"
 import { ThemeContext } from "../Controllers/ThemeContext"
+import { AdminDrawer } from "./Admin/AdminDrawer"
 
-export const Navbar = () => {
+export const Navbar = ({ setActiveComponent }) => {
   const navigate = useNavigate()
   const { mode, toggleTheme } = useContext(ThemeContext)
+
+  const theme = mode === "dark" ? DARKCOLORS : COLORS
 
   const logout = () => {
     localStorage.removeItem('token', 'user')
@@ -20,51 +22,9 @@ export const Navbar = () => {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const adminListContents = [
-    { icon: <Dashboard />, name: 'Dashboard' },
-    { icon: <Event />, name: 'Events' },
-    { icon: <CoPresent />, name: 'Resources' },
-    { icon: <Assessment />, name: 'Reports' },
-  ]
-
-  const AdminDrawerList = (
-    <Box sx={{ width: 250, height: '100%', display: 'flex', flexDirection: 'column' }}
-      role="presentation" onClick={() => setDrawerOpen(false)}>
-      <List>
-        {adminListContents.map((item) => (
-          <ListItem key={item.name} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Box sx={{ flexGrow: 1 }} />
-      <Divider />
-      <List>
-        {[
-          { icon: mode === "light" ? <DarkMode /> : <LightMode />, name: 'Theme', function: toggleTheme },
-          { icon: <Logout />, name: 'Logout', function: logout },
-        ].map((item) => (
-          <ListItem key={item.name} disablePadding>
-            <ListItemButton onClick={item.function}>
-              <ListItemIcon>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-
   return (
     <>
-      <NavbarWrapper open={drawerOpen} sx={{ flexGrow: 1, bgcolor: COLORS.primaryBg }}>
+      <NavbarWrapper open={drawerOpen} sx={{ flexGrow: 1, bgcolor: theme.primaryBg, height: '15dvh' }}>
         <Grid container>
           <Grid size={9}>
             <Box sx={{ flexGrow: 1, p: 2 }}>
@@ -83,10 +43,10 @@ export const Navbar = () => {
                     visibility: { lg: 'visible', md: 'visible', sm: drawerOpen ? 'hidden' : 'visible', xs: drawerOpen ? 'hidden' : 'visible' },
                     flexDirection: 'column', justifyContent: 'center', height: '100%'
                   }}>
-                    <Box sx={{ fontWeight: 'bolder', fontStyle: 'italic', color: COLORS.primaryText, fontSize: { lg: 40, md: 40, sm: 35, xs: 25 } }}>
+                    <Box sx={{ fontWeight: 'bolder', fontStyle: 'italic', color: theme.primaryText, fontSize: { lg: 40, md: 40, sm: 35, xs: 25 } }}>
                       Azentra
                     </Box>
-                    <Box sx={{ color: COLORS.secondaryText, fontSize: { lg: 20, md: 20, sm: 18, xs: 15 } }}>
+                    <Box sx={{ color: theme.secondaryText, fontSize: { lg: 20, md: 20, sm: 18, xs: 15 } }}>
                       Report App
                     </Box>
                   </Box>
@@ -96,12 +56,12 @@ export const Navbar = () => {
           </Grid>
           <Grid size={3}>
             <Box sx={{ height: '100%', display: 'flex', justifyContent: 'flex-end', pr: 4, alignItems: 'center' }}>
-              <MenuUI open={drawerOpen} onClick={() => setDrawerOpen(!drawerOpen)} />
+              <MenuUI open={drawerOpen} onClick={() => setDrawerOpen(!drawerOpen)} mode={mode}/>
             </Box>
           </Grid>
         </Grid>
         <Drawer variant="persistent" anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-          {AdminDrawerList}
+          <AdminDrawer mode={mode} logout={logout} toggleTheme={toggleTheme} setDrawerOpen={setDrawerOpen} setActiveComponent={setActiveComponent}/>
         </Drawer>
       </NavbarWrapper>
     </>

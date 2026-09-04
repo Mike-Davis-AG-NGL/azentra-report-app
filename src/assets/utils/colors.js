@@ -12,7 +12,7 @@ export const COLORS = {
     successHover: '#5fa6b6',
     error: '#CD2C2C',
     errorHover: '#a82424',
-    background: 'rgba(239, 237, 235, 0.9)',
+    background: 'rgba(255, 255, 255, 0.99)',
     shadow: 'rgba(36, 43, 108, 0.5)',
 }
 
@@ -30,6 +30,6 @@ export const DARKCOLORS = {
     successHover: '#5fa6b6',
     error: '#FF4C4C',
     errorHover: '#CD2C2C',
-    backdrop: 'rgba(15, 18, 43, 0.9)',
+    background: 'rgba(15, 18, 43, 0.9)',
     shadow: 'rgba(242, 224, 83, 0.25)',
 }

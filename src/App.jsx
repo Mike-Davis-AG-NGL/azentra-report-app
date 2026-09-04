@@ -6,6 +6,7 @@ import { Home } from "./components/Home"
 import { AdminLogin } from "./components/AdminLogin"
 import { AdminRegister } from "./components/AdminRegister"
 import { AdminHome } from "./components/AdminHome"
+import { AdminComponentProvider } from "./assets/Controllers/AdminComponentProvider"
 
 const Content = () => {
   const location = useLocation()
@@ -14,7 +15,7 @@ const Content = () => {
   const showNavbar = navbar.includes(location.pathname)
 
   return (
-    <>
+    <AdminComponentProvider>
       {showNavbar && <Navbar />}
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -31,7 +32,7 @@ const Content = () => {
           </SecureRoute>
         } />
       </Routes>
-    </>
+    </AdminComponentProvider>
   )
 }
 

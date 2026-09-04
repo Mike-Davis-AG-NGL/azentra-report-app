@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom"
-import { Teacher } from "../assets/utils/Teacher"
-import { Student } from "../assets/utils/Student"
-import { Navbar } from "../assets/utils/Navbar"
+import { Teacher } from "../assets/utils/Teacher/Teacher"
+import { Student } from "../assets/utils/Student/Student"
 import { Box, Grid } from "@mui/material"
 
 export const Home = () => {
