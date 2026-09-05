@@ -136,7 +136,7 @@ export const AdminRegister = () => {
                                                                     <Box sx={{ width: '100%' }}>
                                                                         <Grid size={12}>
                                                                             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                                                                                <ButtonX name={loading ? "VERIFYING..." : "CONTINUE"} theme={COLORS} onClick={fetchSetup} />
+                                                                                <ButtonX name={loading ? "VERIFYING..." : "CONTINUE"} onClick={fetchSetup} />
                                                                             </Box>
                                                                         </Grid>
                                                                     </Box>

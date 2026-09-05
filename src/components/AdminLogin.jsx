@@ -139,7 +139,7 @@ export const AdminLogin = () => {
                                 </Box>
                             </CardContent><br />
                             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <ButtonX name={loading ? "LOGGING..." : "LOGIN"} theme={COLORS} onClick={handleLogin} disabled={loading}/>
+                                <ButtonX name={loading ? "LOGGING..." : "LOGIN"} onClick={handleLogin} disabled={loading}/>
                             </CardActions><br />
                             {/* <CardContent sx={{ pb: 0 }}>
                                 <Box sx={{ textAlign: 'center', color: COLORS.secondaryText }}>

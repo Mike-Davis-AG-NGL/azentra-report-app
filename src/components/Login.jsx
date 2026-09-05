@@ -221,7 +221,7 @@ export const Login = () => {
                                 </Box>
                             </CardContent><br />
                             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <ButtonX name={loading ? "LOGGING..." : "LOGIN"} theme={COLORS} onClick={handleLogin} />
+                                <ButtonX name={loading ? "LOGGING..." : "LOGIN"} onClick={handleLogin} />
                             </CardActions><br />
                             {/* <CardContent sx={{ pb: 0 }}>
                                 <Box sx={{ textAlign: 'center', color: COLORS.secondaryText }}>

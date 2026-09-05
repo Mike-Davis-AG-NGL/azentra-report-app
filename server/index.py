@@ -21,13 +21,13 @@ jwt = JWTManager(app)
 
 db.init_app(app)
 
-from models.users import User
+from models.trainer import Trainer
 from models.admin import Admin
 
 with app.app_context():
     db.create_all()
 
-from routes.user_route import auth
+from routes.trainer_route import auth
 from routes.admin_route import admin_auth
 
 app.register_blueprint(auth, url_prefix = "/api/auth")

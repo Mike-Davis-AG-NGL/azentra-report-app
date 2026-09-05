@@ -1,4 +1,8 @@
-export const ButtonXS = ({ name, theme, onClick }) => {
+import { UseTheme } from "../Controllers/UseTheme"
+import { COLORS } from "./colors"
+
+export const ButtonXS = ({ name, onClick }) => {
+    const theme = UseTheme()
     return (
         <>
             <style>{`
@@ -37,7 +41,7 @@ export const ButtonXS = ({ name, theme, onClick }) => {
                     text-decoration: none;
                     width: 100%;
                     padding: 2px 4px;
-                    color: ${theme.primaryText};
+                    color: ${COLORS.primaryText};
                     font-size: 1.125em;
                     font-weight: 700;
                     letter-spacing: 0.3em;
