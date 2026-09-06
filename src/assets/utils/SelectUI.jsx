@@ -30,7 +30,7 @@ const StyledWrapper = styled.div`
     box-sizing: border-box;
     box-shadow: 0 0 0px 1px #242F6C;
     padding: 0.25rem;
-    width: 300px;
+    width: 250px;
     font-size: 14px;
   }
 

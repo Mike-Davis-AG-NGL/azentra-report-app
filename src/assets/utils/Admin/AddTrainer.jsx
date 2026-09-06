@@ -3,12 +3,15 @@
 import { Alert, Backdrop, Box, Card, CardActions, CardContent, Grid, Snackbar, Typography } from "@mui/material"
 import { UseTheme } from "../../Controllers/UseTheme"
 import { ButtonX } from "../ButtonX"
-import { useState } from "react"
+import { ButtonXS } from "../ButtonXS"
+import { useState, useRef } from "react"
 import { InputField } from "../InputField"
 import { SelectUI } from "../SelectUI"
 import axios from "axios"
+import html2canvas from "html2canvas"
 
 export const AddTrainer = () => {
+    const trainerCardRef = useRef(null)
     const theme = UseTheme()
     const [fname, setFname] = useState('')
     const [lname, setLname] = useState('')
@@ -45,6 +48,27 @@ export const AddTrainer = () => {
         setMobile('')
         setSpecialization('')
         setStatus('Active')
+    }
+
+    const handlePrint = async () => {
+        if (!trainerCardRef.current) return
+        try {
+            const canvas = await html2canvas(trainerCardRef.current, {
+                backgroundColor: theme.cardBg,
+                scale: 2,
+                useCORS: true
+            })
+
+            const image = canvas.toDataURL("image/png")
+            const link = document.createElement("a")
+            link.href = image
+            link.download = `${trainerCredentials.trainer_id}-credentials.png`
+            link.click()
+        } catch (error) {
+            setSuccess('')
+            setError(error.response?.data?.message || "Unable to generate trainer credential card")
+            setOpenSnackbar(true)
+        }
     }
 
     const handleAddTrainer = async () => {
@@ -166,28 +190,35 @@ export const AddTrainer = () => {
                     backgroundColor: theme.cardBg, border: `solid 2px ${theme.cardBorder}`, borderRadius: 5,
                     boxShadow: `0px 0px 8px 10px ${theme.shadow}`
                 }}>
-                    <CardContent>
-                        <Typography gutterBottom sx={{ color: theme.success, fontSize: 20 }}>
-                            Trainer account created Successfully
-                        </Typography>
-                        <Typography gutterBottom sx={{ color: theme.secondaryText, fontSize: 14 }}>
-                            Trainer email: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.email}</span>
-                        </Typography>
-                        <Typography variant="h5" component="div">
-                            Trainer ID: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.trainer_id}</span>
-                        </Typography>
-                        <Typography sx={{ color: theme.secondaryText, mb: 1.5 }}>
-                            Temporary password: <br />
-                            <span style={{ color: theme.primaryText }}>{trainerCredentials.temporary_password}</span>
-                        </Typography>
-                        <Typography
-                            sx={{ color: theme.error, fontSize: 13, mt: 3 }}>
-                            Please save these credentials. The trainer must change
-                            the temporary password during their first login.
-                        </Typography>
-                    </CardContent>
-                    <CardActions>
+                    <Box ref={trainerCardRef}>
+                        <CardContent>
+                            <Typography gutterBottom sx={{ color: theme.success, fontSize: 20 }}>
+                                Trainer account created Successfully
+                            </Typography>
+                            <Typography gutterBottom sx={{ color: theme.secondaryText, fontSize: 14 }}>
+                                Trainer email: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.email}</span>
+                            </Typography>
+                            <Typography variant="h5" component="div">
+                                Trainer ID: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.trainer_id}</span>
+                            </Typography>
+                            <Typography sx={{ color: theme.secondaryText, mb: 1.5 }}>
+                                Temporary password: <br />
+                                <span style={{ color: theme.primaryText }}>{trainerCredentials.temporary_password}</span>
+                            </Typography>
+                            <Typography
+                                sx={{ color: theme.error, fontSize: 13, mt: 3 }}>
+                                Please save these credentials. The trainer must change
+                                the temporary password during their first login.
+                            </Typography>
+                        </CardContent>
+                    </Box>
+                    <CardActions sx={{ display: {lg: 'flex', md: 'flex', sm: 'none', xs: 'none'}, justifyContent: 'center' }}>
                         <ButtonX name="Close" onClick={handleCloseBackdrop} />
+                        <ButtonX name="Print" onClick={handlePrint} />
+                    </CardActions>
+                    <CardActions sx={{ display: {lg: 'none', md: 'none', sm: 'flex', xs: 'flex'}, justifyContent: 'center' }}>
+                        <ButtonXS name="Close" onClick={handleCloseBackdrop} />
+                        <ButtonXS name="Print" onClick={handlePrint} />
                     </CardActions>
                 </Card>
             </Backdrop>
