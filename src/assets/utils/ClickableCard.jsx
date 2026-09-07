@@ -37,7 +37,7 @@ const StyledWrapper = styled.div`
     user-select: none;
     font-weight: bolder;
     color: black;
-    padding: 200px 150px;
+    padding: 150px 120px;
   }
 
   .card:hover {
