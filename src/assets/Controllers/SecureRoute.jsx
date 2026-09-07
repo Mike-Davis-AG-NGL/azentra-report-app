@@ -22,10 +22,8 @@ export const SecureRoute = ({ children }) => {
     })
 
     if (isTokenExpired) {
-        localStorage.removeItem('token')
-        sessionStorage.removeItem('token')
-        localStorage.removeItem('user')
-        sessionStorage.removeItem('user')
+        localStorage.removeItem('token', 'user')
+        sessionStorage.removeItem('token', 'user')
 
         return (
             <Navigate
