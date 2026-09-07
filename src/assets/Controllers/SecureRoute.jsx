@@ -1,4 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom"
+import { jwtDecode } from "jwt-decode"
+import { useState } from "react"
 
 export const SecureRoute = ({ children }) => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token')
@@ -8,6 +10,31 @@ export const SecureRoute = ({ children }) => {
     const isAdminRoute = location.pathname === "/admin/login" || location.pathname === "/admin/auth/setup"
     const isAdminPath = location.pathname.startsWith("/admin")
 
-    return !token && !isAdminRoute ? <Navigate to={isAdminPath ? '/admin/login' : '/login'} replace /> : 
-    role === "admin" && location.pathname === "/" ? <Navigate to='/admin/' replace /> : children
+    const [isTokenExpired] = useState(() => {
+        if (!token) return false
+
+        try {
+            const decoded = jwtDecode(token)
+            return decoded.exp < Date.now() / 1000
+        } catch {
+            return true
+        }
+    })
+
+    if (isTokenExpired) {
+        localStorage.removeItem('token')
+        sessionStorage.removeItem('token')
+        localStorage.removeItem('user')
+        sessionStorage.removeItem('user')
+
+        return (
+            <Navigate
+                to={isAdminPath ? '/admin/login' : '/login'}
+                replace
+            />
+        )
+    }
+
+    return !token && !isAdminRoute ? <Navigate to={isAdminPath ? '/admin/login' : '/login'} replace /> :
+        role === "admin" && location.pathname === "/" ? <Navigate to='/admin/' replace /> : children
 }

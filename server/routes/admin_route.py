@@ -4,7 +4,7 @@ import base64
 import qrcode
 import hashlib
 import pyotp
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import (create_access_token, jwt_required, get_jwt_identity)
 
 from config.database import db
 from models.admin import Admin
@@ -158,4 +158,88 @@ def admin_auth_setup_verify():
             "email": admin.admin_email,
             "role": admin.role
         }
+    }, 200
+
+@admin_auth.get('/account/details')
+@jwt_required()
+def admin_auth_details():
+    identity = get_jwt_identity()
+
+    if not identity or not identity.startswith("admin"):
+        return {
+            "success": False,
+            "message": "Invalid authentication token"
+        }, 401
+    
+    try:
+        admin_id = int(identity.split(":")[1].strip())
+    except (ValueError, IndexError):
+        return {
+            "success": False,
+            "message": "Invalid authentication token"
+        }, 401
+    
+    admin = Admin.query.get(admin_id)
+
+    if not admin:
+        return {
+            "success": False,
+            "message": "Admin account not found"
+        }, 404
+    
+    totp = pyotp.TOTP(
+        admin.totp_secret,
+        digits=8,
+        interval=30,
+        digest=hashlib.sha512
+    )
+
+    uri = totp.provisioning_uri(
+        name=admin.admin_email,
+        issuer_name="AG Report Admin"
+    )
+    
+    return {
+        "success": True,
+        "account": {
+            "id": admin.id,
+            "email": admin.admin_email,
+            "totp": admin.totp_secret,
+            "qr_uri": uri
+        }
+    }, 200
+
+@admin_auth.delete('/delete/account')
+@jwt_required()
+def admin_auth_delete_account():
+    identity = get_jwt_identity()
+
+    if not identity or not identity.startswith("admin"):
+        return {
+            "success": False,
+            "message": "Invalid Authentication Token"
+        }, 401
+    
+    try:
+        admin_id = int(identity.split(":")[1].strip())
+    except (ValueError, IndexError):
+        return {
+            "success": False,
+            "message": "Invalid Authentication Token"
+        }, 401
+    
+    admin = Admin.query.get(admin_id)
+
+    if not admin:
+        return {
+            "success": False,
+            "message": "Admin account not found"
+        }, 404
+    
+    db.session.delete(admin)
+    db.session.commit()
+
+    return {
+        "success": True,
+        "message": "Admin account deleted successfully"
     }, 200

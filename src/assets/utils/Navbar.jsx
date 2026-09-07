@@ -56,12 +56,19 @@ export const Navbar = ({ setActiveComponent }) => {
           </Grid>
           <Grid size={3}>
             <Box sx={{ height: '100%', display: 'flex', justifyContent: 'flex-end', pr: 4, alignItems: 'center' }}>
-              <MenuUI open={drawerOpen} onClick={() => setDrawerOpen(!drawerOpen)} mode={mode}/>
+              <MenuUI open={drawerOpen} onClick={() => setDrawerOpen(!drawerOpen)} mode={mode} />
             </Box>
           </Grid>
         </Grid>
-        <Drawer variant="persistent" anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-          <AdminDrawer mode={mode} logout={logout} toggleTheme={toggleTheme} setDrawerOpen={setDrawerOpen} setActiveComponent={setActiveComponent}/>
+        <Drawer variant="persistent" anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}
+          sx={{
+            "& .MuiDrawer-paper": {
+              backgroundColor: theme.background,
+              color: theme.primaryText,
+              borderLeft: `1px solid ${theme.cardBorder}`,
+            },
+          }}>
+          <AdminDrawer mode={mode} logout={logout} toggleTheme={toggleTheme} setDrawerOpen={setDrawerOpen} setActiveComponent={setActiveComponent} />
         </Drawer>
       </NavbarWrapper>
     </>

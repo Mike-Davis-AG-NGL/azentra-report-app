@@ -4,6 +4,7 @@ from config.database import db
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
 import os
+from datetime import timedelta
 
 load_dotenv()
 
@@ -16,8 +17,35 @@ CORS(
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI")
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 
 jwt = JWTManager(app)
+
+@jwt.unauthorized_loader
+def unauthorized_callback(error):
+    print("JWT UNAUTHORIZED:", error)
+    return {
+        "success": False,
+        "message": error
+    }, 401
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    print("JWT INVALID:", error)
+    return {
+        "success": False,
+        "message": error
+    }, 401
+
+
+@jwt.expired_token_loader
+def expired_token_callback(jwt_header, jwt_payload):
+    print("JWT EXPIRED")
+    return {
+        "success": False,
+        "message": "Token has expired"
+    }, 401
 
 db.init_app(app)
 

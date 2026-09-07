@@ -4,7 +4,7 @@ export const COLORS = {
     cardBg: '#FFFFFF',
     cardBorder: '#242F6C',
     primaryText: '#242F6C',
-    secondaryText: '#CD2C2C',
+    secondaryText: '#7a0606ff',
     mutedText: '#79B8C8',
     primaryAccent: '#F2E053',
     accentHover: '#CD2C2C',
