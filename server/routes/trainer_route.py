@@ -264,3 +264,25 @@ def change_password():
         "success": True,
         "message": "Password changed successfully"
     }, 200
+
+@auth.get("/trainer/profile")
+@jwt_required()
+def get_trainer_profile():
+    trainers = Trainer.query.order_by(Trainer.id.asc()).all()
+    return {
+        "success": True,
+        "trainers": [
+            {
+                "id": trainer.id,
+                "trainer_id": trainer.trainer_id,
+                "fname": trainer.fname,
+                "lname": trainer.lname,
+                "email": trainer.email,
+                "mobile": trainer.mobile,
+                "specialization": trainer.specialization,
+                "status": trainer.status,
+                "role": trainer.role
+            }
+            for trainer in trainers
+        ]
+    }, 200

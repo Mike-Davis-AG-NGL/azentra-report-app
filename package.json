@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.11",
+    "@mui/x-data-grid": "^9.14.0",
     "axios": "^1.13.2",
     "concurrently": "^9.2.1",
     "html2canvas": "^1.4.1",

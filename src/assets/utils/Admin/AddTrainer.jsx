@@ -107,7 +107,7 @@ export const AddTrainer = () => {
         <Box sx={{ flexGrow: 1 }}>
             <Grid container>
                 <Grid size={12}>
-                    <Box sx={{ height: '84dvh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Card variant="outlined" sx={{
                             width: { lg: 400, md: 400, sm: 400, xs: 300 },
                             backgroundColor: theme.cardBg, border: `solid 2px ${theme.cardBorder}`, borderRadius: 5,

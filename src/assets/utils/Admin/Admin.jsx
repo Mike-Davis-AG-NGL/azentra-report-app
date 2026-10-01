@@ -6,7 +6,7 @@ import { AdminComponentContext } from "../../Controllers/AdminComponentContext"
 export const Admin = () => {
   const { activeComponent } = useContext(AdminComponentContext)
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, height: '100%' }}>
       <Grid container>
         <Grid size={12}>
           {activeComponent}

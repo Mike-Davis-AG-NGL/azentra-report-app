@@ -7,7 +7,7 @@ export const COLORS = {
     secondaryText: '#7a0606ff',
     mutedText: '#79B8C8',
     primaryAccent: '#F2E053',
-    accentHover: '#CD2C2C',
+    accentHover: '#ff7300',
     success: '#79B8C8',
     successHover: '#5fa6b6',
     error: '#CD2C2C',

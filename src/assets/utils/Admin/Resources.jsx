@@ -12,7 +12,7 @@ export const Resources = () => {
   const [value, setValue] = useState(0)
   const handleChange = (e, nv) => setValue(nv)
   return (
-    <Box sx={{ flexGrow: 1, height: '85dvh' }}>
+    <Box sx={{ flexGrow: 1, height: '100dvh', bgcolor: theme.background }}>
       <Grid container>
         <Grid size={12}>
           <Box sx={{ flexGrow: 1 }}>
