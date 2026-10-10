@@ -40,6 +40,7 @@ export const InputField = ({ placeholder, mode = "text", theme, onChange, value 
 
                 .input:focus {
                     background-color: ${theme.primaryBg};
+                    color: ${theme.primaryText};
                     transform: scale(1.05);
                     box-shadow: 13px 13px 100px #969696,
                                 -13px -13px 100px #ffffff;

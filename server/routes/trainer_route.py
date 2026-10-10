@@ -286,3 +286,179 @@ def get_trainer_profile():
             for trainer in trainers
         ]
     }, 200
+
+@auth.patch('/trainer/edit/<int:id>')
+@jwt_required()
+def edit_trainer_profile(id):
+    data = request.get_json()
+    trainer = Trainer.query.get(id)
+    if not trainer:
+        return {
+            "success": False,
+            "message": "Trainer account not found"
+        }, 404
+    
+    fname = data.get("fname")
+    lname = data.get("lname")
+    email = data.get("email")
+    mobile = data.get("mobile")
+    specialization = data.get("specialization")
+    status = data.get("status")
+
+    if not all([
+        fname, lname, email, mobile, specialization, status
+    ]):
+        return {
+            "success": False,
+            "message": "All trainer fields are required"
+        }, 400
+    
+    fname = fname.strip()
+    lname = lname.strip()
+    email = email.strip().lower()
+    mobile = mobile.strip()
+    specialization = specialization.strip()
+
+    if not all([fname, lname, email, mobile, specialization]):
+        return {
+            "success": False,
+            "message": "Trainer fields cannot be empty"
+        }, 400
+
+    if status not in ["Active", "Inactive"]:
+        return {
+            "success": False,
+            "message": "Invalid status"
+        }, 400
+    
+    existing_email = Trainer.query.filter(
+        Trainer.email == email,
+        Trainer.id != id
+    ).first()
+
+    if existing_email:
+        return {
+            "success": False,
+            "message": "Email already registered"
+        }, 409
+    
+    existing_mobile = Trainer.query.filter(
+        Trainer.mobile == mobile,
+        Trainer.id != id
+    ).first()
+
+    if existing_mobile:
+        return {
+            "success": False,
+            "message": "Mobile already exists"
+        }, 409
+    
+    trainer.fname = fname
+    trainer.lname = lname
+    trainer.email = email
+    trainer.mobile = mobile
+    trainer.specialization = specialization
+    trainer.status = status
+
+    try:
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        print("Trainer update error:", error)
+
+        return {
+            "success": False,
+            "message": "Failed to update trainer profile"
+        }, 500
+
+    return {
+        "success": True,
+        "message": "Trainer profile updated successfully",
+        "trainer": {
+            "id": trainer.id,
+            "trainer_id": trainer.trainer_id,
+            "fname": trainer.fname,
+            "lname": trainer.lname,
+            "email": trainer.email,
+            "mobile": trainer.mobile,
+            "specialization": trainer.specialization,
+            "status": trainer.status,
+            "role": trainer.role
+        }
+    }, 200
+
+@auth.delete('/trainer/delete/<int:id>')
+@jwt_required()
+def delete_trainer_profile(id):
+    trainer = Trainer.query.get(id)
+    if not trainer:
+        return {
+            "success": False,
+            "message": "Trainer account not found"
+        }, 404
+
+    try:
+        db.session.delete(trainer)
+        db.session.commit()
+
+        return {
+            "success": True,
+            "message": "Trainer deleted successfully"
+        }, 200
+
+    except Exception as error:
+        db.session.rollback()
+        print("Trainer delete error:", error)
+
+        return {
+            "success": False,
+            "message": "Failed to delete trainer"
+        }, 500
+
+
+@auth.post('/trainer/profile/download/<int:id>')
+@jwt_required()
+def download_trainer_profile(id):
+    trainer = Trainer.query.get(id)
+    if not trainer:
+        return {
+            "success": False,
+            "message": "Trainer account not found"
+        }, 404
+    temporary_password = generate_temporary_password()
+
+    hashed_password = bcrypt.hashpw(
+        temporary_password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+    trainer.password = hashed_password
+    trainer.must_change_password = True
+
+    try:
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        print("Trainer credential reset error:", error)
+
+        return {
+            "success": False,
+            "message": "Failed to reset trainer credentials"
+        }, 500
+
+    return {
+        "success": True,
+        "message": "Trainer credentials reset successfully",
+        "trainer": {
+            "id": trainer.id,
+            "fname": trainer.fname,
+            "lname": trainer.lname,
+            "trainer_id": trainer.trainer_id,
+            "email": trainer.email,
+        },
+        "credentials": {
+            "trainer_id": trainer.trainer_id,
+            "email": trainer.email,
+            "temporary_password": temporary_password
+        }
+    }, 200

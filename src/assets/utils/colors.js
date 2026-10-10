@@ -19,7 +19,7 @@ export const COLORS = {
 export const DARKCOLORS = {
     primaryBg: '#0F122B',
     secondaryBg: '#242F6C',
-    cardBg: 'rgba(255,255,255,0.05)',
+    cardBg: '#202020',
     cardBorder: '#F2E053',
     primaryText: '#EFEDEB',
     secondaryText: '#F6CDAB',

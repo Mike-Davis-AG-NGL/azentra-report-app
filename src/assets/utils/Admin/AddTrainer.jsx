@@ -185,11 +185,26 @@ export const AddTrainer = () => {
                 sx={(themes) => ({ color: theme.primaryText, zIndex: themes.zIndex.drawer + 1 })}
                 open={openBackdrop}
             >
-                <Card variant="outlined" sx={{
-                    width: { lg: 300, md: 300, sm: 300, xs: 250 },
-                    backgroundColor: theme.cardBg, border: `solid 2px ${theme.cardBorder}`, borderRadius: 5,
-                    boxShadow: `0px 0px 8px 10px ${theme.shadow}`
-                }}>
+                <Card
+                    variant="outlined"
+                    sx={{
+                        width: { lg: 300, md: 300, sm: 300, xs: 250 },
+                        background: theme.cardBg,
+                        backgroundColor: theme.cardBg,
+                        backgroundImage: "none",
+                        opacity: 1,
+                        border: `solid 2px ${theme.cardBorder}`,
+                        borderRadius: 5,
+                        boxShadow: `0px 8px 24px ${theme.shadow}`,
+                        backdropFilter: "none",
+                        WebkitBackdropFilter: "none",
+                        "&.MuiPaper-root": {
+                            backgroundColor: theme.cardBg,
+                            backgroundImage: "none",
+                            opacity: 1,
+                        },
+                    }}
+                >
                     <Box ref={trainerCardRef}>
                         <CardContent>
                             <Typography gutterBottom sx={{ color: theme.success, fontSize: 20 }}>
@@ -199,7 +214,7 @@ export const AddTrainer = () => {
                                 Trainer email: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.email}</span>
                             </Typography>
                             <Typography variant="h5" component="div">
-                                Trainer ID: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.trainer_id}</span>
+                                <span style={{color: theme.secondaryText}}>Trainer ID:</span> <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.trainer_id}</span>
                             </Typography>
                             <Typography sx={{ color: theme.secondaryText, mb: 1.5 }}>
                                 Temporary password: <br />
@@ -212,11 +227,11 @@ export const AddTrainer = () => {
                             </Typography>
                         </CardContent>
                     </Box>
-                    <CardActions sx={{ display: {lg: 'flex', md: 'flex', sm: 'none', xs: 'none'}, justifyContent: 'center' }}>
+                    <CardActions sx={{ display: { lg: 'flex', md: 'flex', sm: 'none', xs: 'none' }, justifyContent: 'center' }}>
                         <ButtonX name="Close" onClick={handleCloseBackdrop} />
                         <ButtonX name="Print" onClick={handlePrint} />
                     </CardActions>
-                    <CardActions sx={{ display: {lg: 'none', md: 'none', sm: 'flex', xs: 'flex'}, justifyContent: 'center' }}>
+                    <CardActions sx={{ display: { lg: 'none', md: 'none', sm: 'flex', xs: 'flex' }, justifyContent: 'center' }}>
                         <ButtonXS name="Close" onClick={handleCloseBackdrop} />
                         <ButtonXS name="Print" onClick={handlePrint} />
                     </CardActions>
