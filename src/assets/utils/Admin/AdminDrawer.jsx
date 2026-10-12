@@ -1,24 +1,23 @@
 import { Assessment, CoPresent, DarkMode, Dashboard, Event, LightMode, Logout, ManageAccounts } from "@mui/icons-material"
 import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import { AdminDashboard } from "./AdminDashboard"
-import { Events } from "./Events"
+import { AdminEvents } from "./AdminEvents"
 import { Resources } from "./Resources"
-import { Reports } from "./Reports"
+import { AdminReports } from "./AdminReports"
 import { useContext } from "react"
 import { AdminComponentContext } from "../../Controllers/AdminComponentContext"
 import { AdminAccount } from "./AdminAccount"
 import { UseTheme } from "../../Controllers/UseTheme"
 
 export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
-
     const { setActiveComponent } = useContext(AdminComponentContext)
     const theme = UseTheme()
 
     const adminListContents = [
         { icon: <Dashboard sx={{ color: theme.secondaryText }} />, name: 'Dashboard', Component: <AdminDashboard /> },
-        { icon: <Event sx={{ color: theme.secondaryText }} />, name: 'Events', Component: <Events /> },
+        { icon: <Event sx={{ color: theme.secondaryText }} />, name: 'Events', Component: <AdminEvents /> },
         { icon: <CoPresent sx={{ color: theme.secondaryText }} />, name: 'Resources', Component: <Resources /> },
-        { icon: <Assessment sx={{ color: theme.secondaryText }} />, name: 'Reports', Component: <Reports /> },
+        { icon: <Assessment sx={{ color: theme.secondaryText }} />, name: 'Reports', Component: <AdminReports /> },
         { icon: <ManageAccounts sx={{ color: theme.secondaryText }} />, name: 'Account Setting', Component: <AdminAccount /> }
     ]
 

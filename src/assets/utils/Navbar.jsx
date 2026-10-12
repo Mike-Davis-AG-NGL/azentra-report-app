@@ -7,16 +7,21 @@ import { NavbarWrapper } from "./styledComponent"
 import { useNavigate } from "react-router-dom"
 import { ThemeContext } from "../Controllers/ThemeContext"
 import { AdminDrawer } from "./Admin/AdminDrawer"
+import { TrainerDrawer } from "./Trainer/TrainerDrawer"
 
 export const Navbar = ({ setActiveComponent }) => {
   const navigate = useNavigate()
   const { mode, toggleTheme } = useContext(ThemeContext)
 
   const theme = mode === "dark" ? DARKCOLORS : COLORS
+  const role = localStorage.getItem('role') || sessionStorage.getItem('role')
 
   const logout = () => {
-    localStorage.removeItem('token', 'user')
-    navigate('/')
+    localStorage.removeItem('token')
+    localStorage.removeItem('role')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('role')
+    navigate('/login', { replace: true })
   }
 
   // Drawer
@@ -68,7 +73,11 @@ export const Navbar = ({ setActiveComponent }) => {
               borderLeft: `1px solid ${theme.cardBorder}`,
             },
           }}>
-          <AdminDrawer mode={mode} logout={logout} toggleTheme={toggleTheme} setDrawerOpen={setDrawerOpen} setActiveComponent={setActiveComponent} />
+          {role === "admin" ? (
+            <AdminDrawer mode={mode} logout={logout} toggleTheme={toggleTheme} setDrawerOpen={setDrawerOpen} setActiveComponent={setActiveComponent} />
+          ) : role === "trainer" ? (
+            <TrainerDrawer mode={mode} logout={logout} toggleTheme={toggleTheme} setDrawerOpen={setDrawerOpen} setActiveComponent={setActiveComponent}/>
+          ) : null}
         </Drawer>
       </NavbarWrapper>
     </>

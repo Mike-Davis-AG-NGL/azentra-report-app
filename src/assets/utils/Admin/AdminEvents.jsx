@@ -1,6 +1,6 @@
 // import React from 'react'
 
-export const Events = () => {
+export const AdminEvents = () => {
   return (
     <div>Events</div>
   )

@@ -7,12 +7,7 @@ export const AdminComponentProvider = ({ children }) => {
     const [activeComponent, setActiveComponent] = useState(<AdminDashboard />)
 
     return (
-        <AdminComponentContext.Provider
-            value={{
-                activeComponent,
-                setActiveComponent
-            }}
-        >
+        <AdminComponentContext.Provider value={{ activeComponent, setActiveComponent }}>
             {children}
         </AdminComponentContext.Provider>
     )

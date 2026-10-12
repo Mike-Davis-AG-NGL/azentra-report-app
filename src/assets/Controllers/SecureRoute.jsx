@@ -33,6 +33,15 @@ export const SecureRoute = ({ children }) => {
         )
     }
 
-    return !token && !isAdminRoute ? <Navigate to={isAdminPath ? '/admin/login' : '/login'} replace /> :
-        role === "admin" && location.pathname === "/" ? <Navigate to='/admin/' replace /> : children
+
+    if (!token && !isAdminRoute) {
+        return <Navigate to={isAdminPath ? '/admin/login' : '/login'} replace />
+    }
+
+    if (role === "admin" && location.pathname === "/") {
+        return children
+    }
+
+    return children
+
 }

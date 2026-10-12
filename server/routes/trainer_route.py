@@ -66,7 +66,7 @@ def login():
             "message": "Invalid Password"
         }, 401
     
-    token = create_access_token(identity = user.id)
+    token = create_access_token(identity = str(user.id))
     
     return {
         "success": True,
@@ -217,7 +217,7 @@ def change_password():
             "message": "New password must be at least 8 characters"
         }, 400
 
-    id = get_jwt_identity()
+    id = int(get_jwt_identity())
 
     trainer = Trainer.query.get(id)
 

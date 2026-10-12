@@ -1,4 +1,4 @@
-import { Alert, Box, Button, ButtonGroup, Card, CardActions, CardContent, Grid, Link, Snackbar, Typography } from "@mui/material"
+import { Alert, Backdrop, Box, Button, ButtonGroup, Card, CardActions, CardContent, Grid, Link, Snackbar, Typography } from "@mui/material"
 import logo from '../assets/images/logo.png'
 import teacher from '../assets/images/Teacher.jpg'
 import teacherXS from '../assets/images/TeacherMobile.jpg'
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom"
 
 export const Login = () => {
     const navigate = useNavigate()
-    const [role, setRole] = useState("teacher")
+    const [role, setRole] = useState("trainer")
 
     // Students field
     const [regNum, setRegNum] = useState('')
@@ -22,15 +22,24 @@ export const Login = () => {
     const [dept, setDept] = useState('')
     const [clg, setClg] = useState('')
 
-    // resource person/teacher field
+    // resource person/trainer field
     const [username, setUsername] = useState('')
     const [password, SetPassword] = useState('')
     const [remember, setRemember] = useState(false)
 
+    // Change password state
+    const [newPwd, setNewPwd] = useState("")
+    const [cnfmPwd, setCnfmPwd] = useState("")
+    const [changingPassword, setChangingPassword] = useState(false)
+
     const [loading, setLoading] = useState(false)
 
-    const image = role === "teacher" ? teacher : student
-    const imageXS = role === "teacher" ? teacherXS : studentXS
+    const image = role === "trainer" ? teacher : student
+    const imageXS = role === "trainer" ? teacherXS : studentXS
+
+    // Backdrop
+    const [openBackdrop, setOpenBackdrop] = useState(false);
+    // const handleCloseBackdrop = () => setOpenBackdrop(false)
 
     // snackbar
     const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -65,7 +74,14 @@ export const Login = () => {
                 return
             }
 
-            remember ? localStorage.setItem('token', token) : sessionStorage.setItem('token', token)
+            remember
+                ? (localStorage.setItem('token', token), localStorage.setItem('role', response.data.user.role))
+                : (sessionStorage.setItem('token', token), sessionStorage.setItem('role', response.data.user.role));
+
+            if (response.data.must_change_password === true || response.data.must_change_password === 1) {
+                setOpenBackdrop(true)
+                return
+            }
 
             navigate('/', {
                 state: {
@@ -75,9 +91,61 @@ export const Login = () => {
         } catch (error) {
             setSuccess('')
             setError(error.response.data.message)
-            openSnackbar(true)
+            setOpenSnackbar(true)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleChangePassword = async () => {
+        if (!newPwd || !cnfmPwd) {
+            setError("Please enter and confirm your new password")
+            setSuccess("")
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (newPwd.length < 8) {
+            setError('Password must be at least 8 characters');
+            setSuccess('');
+            setOpenSnackbar(true);
+            return;
+        }
+
+        if (newPwd !== cnfmPwd) {
+            setError('Passwords do not match');
+            setSuccess('');
+            setOpenSnackbar(true);
+            return;
+        }
+
+        setChangingPassword(true)
+
+        try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+            await axios.patch('http://localhost:5000/api/auth/password/change', {
+                current_password: password, new_password: newPwd
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setOpenBackdrop(false);
+            setSuccess('Password changed successfully');
+            setError('');
+            setOpenSnackbar(true);
+
+            navigate('/', {
+                state: {
+                    role: 'trainer'
+                }
+            });
+        } catch (error) {
+            setSuccess('');
+            setError(error.response?.data?.message || 'Failed to change password');
+            setOpenSnackbar(true);
+        } finally {
+            setChangingPassword(false)
         }
     }
 
@@ -150,9 +218,9 @@ export const Login = () => {
                                                 </Box>
                                                 <Box>
                                                     <ButtonGroup variant="contained" sx={{ boxShadow: `0px 6px 24px 0px ${COLORS.shadow}` }}>
-                                                        <Button onClick={() => setRole("teacher")} sx={{
-                                                            backgroundColor: role === "teacher" ? COLORS.accentHover : COLORS.primaryAccent,
-                                                            color: role === "teacher" ? COLORS.primaryAccent : COLORS.primaryText, fontWeight: 'bold',
+                                                        <Button onClick={() => setRole("trainer")} sx={{
+                                                            backgroundColor: role === "trainer" ? COLORS.accentHover : COLORS.primaryAccent,
+                                                            color: role === "trainer" ? COLORS.primaryAccent : COLORS.primaryText, fontWeight: 'bold',
                                                             '&:hover': {
                                                                 backgroundColor: COLORS.accentHover, color: COLORS.primaryAccent
                                                             }
@@ -168,7 +236,7 @@ export const Login = () => {
                                                 </Box>
                                             </Box>
                                         </Grid>
-                                        {role === 'teacher' && (
+                                        {role === 'trainer' && (
                                             <>
                                                 <Grid size={12}>
                                                     <Box sx={{ width: '100%' }}>
@@ -211,7 +279,7 @@ export const Login = () => {
                                                 </Grid>
                                                 <Grid size={12}>
                                                     <Box sx={{ width: '100%' }}>
-                                                        <InputField placeholder={"College"} theme={COLORS} 
+                                                        <InputField placeholder={"College"} theme={COLORS}
                                                             value={clg} onChange={(e) => setClg(e.target.value)} />
                                                     </Box>
                                                 </Grid>
@@ -237,6 +305,43 @@ export const Login = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <Backdrop
+                sx={(themes) => ({ color: COLORS.primaryText, zIndex: themes.zIndex.drawer + 1 })}
+                open={openBackdrop}
+            >
+                <Card variant="outlined" sx={{
+                    width: { lg: 400, md: 400, sm: 400, xs: 300 },
+                    backgroundColor: COLORS.cardBg, border: `solid 2px ${COLORS.cardBorder}`, borderRadius: 5,
+                    boxShadow: `0px 0px 8px 10px ${COLORS.shadow}`
+                }}>
+                    <CardContent>
+                        <Box sx={{ flexGrow: 1 }}>
+                            <Grid size={12}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                                    <Box>
+                                        <Typography sx={{ color: COLORS.mutedText, fontWeight: 'bolder' }}>
+                                            Password change required, enter new password to set new password
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid size={12}>
+                                <Box sx={{ width: '100%', pt: 2 }}>
+                                    <InputField placeholder={"Enter New Password"} theme={COLORS} mode="password"
+                                        value={newPwd} onChange={(e) => setNewPwd(e.target.value)} />
+                                </Box>
+                                <Box sx={{ width: '100%', pt: 2 }}>
+                                    <InputField placeholder={"Confirm New Password"} theme={COLORS} mode="password"
+                                        value={cnfmPwd} onChange={(e) => setCnfmPwd(e.target.value)} />
+                                </Box>
+                            </Grid>
+                        </Box>
+                    </CardContent><br />
+                    <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <ButtonX name={changingPassword ? "Changing..." : "Change Password"} onClick={handleChangePassword} />
+                    </CardActions><br />
+                </Card>
+            </Backdrop>
             <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} variant='filled' severity={error ? 'error' : 'success'}
                     sx={{

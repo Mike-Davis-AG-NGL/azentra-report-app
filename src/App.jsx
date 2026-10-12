@@ -7,6 +7,7 @@ import { AdminLogin } from "./components/AdminLogin"
 import { AdminRegister } from "./components/AdminRegister"
 import { AdminHome } from "./components/AdminHome"
 import { AdminComponentProvider } from "./assets/Controllers/AdminComponentProvider"
+import { TrainerComponentProvider } from "./assets/Controllers/TrainerComponentProvider"
 
 const Content = () => {
   const location = useLocation()
@@ -16,22 +17,24 @@ const Content = () => {
 
   return (
     <AdminComponentProvider>
-      {showNavbar && <Navbar />}
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/auth/setup" element={<AdminRegister />} />
-        <Route path="/admin/" element={
-          <SecureRoute>
-            <AdminHome />
-          </SecureRoute>
-        } />
-        <Route path="/" element={
-          <SecureRoute>
-            <Home />
-          </SecureRoute>
-        } />
-      </Routes>
+      <TrainerComponentProvider>
+        {showNavbar && <Navbar />}
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/auth/setup" element={<AdminRegister />} />
+          <Route path="/admin/" element={
+            <SecureRoute>
+              <AdminHome />
+            </SecureRoute>
+          } />
+          <Route path="/" element={
+            <SecureRoute>
+              <Home />
+            </SecureRoute>
+          } />
+        </Routes>
+      </TrainerComponentProvider>
     </AdminComponentProvider>
   )
 }
