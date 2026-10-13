@@ -1,8 +1,8 @@
 from flask import Flask
-from flask_cors import CORS
+from flask_cors import CORS # type: ignore
 from config.database import db
-from dotenv import load_dotenv
-from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv # type: ignore
+from flask_jwt_extended import JWTManager # type: ignore
 import os
 from datetime import timedelta
 
@@ -51,15 +51,24 @@ db.init_app(app)
 
 from models.trainer import Trainer
 from models.admin import Admin
+from models.college import College
+from models.department import Department
+from models.events import Events
 
 with app.app_context():
     db.create_all()
 
 from routes.trainer_route import auth
 from routes.admin_route import admin_auth
+from routes.college_route import college_crud
+from routes.department_route import department_crud
+from routes.event_route import events_crud
 
 app.register_blueprint(auth, url_prefix = "/api/auth")
 app.register_blueprint(admin_auth, url_prefix = "/api/admin")
+app.register_blueprint(college_crud, url_prefix = "/api/college")
+app.register_blueprint(department_crud, url_prefix = "/api/department")
+app.register_blueprint(events_crud, url_prefix = "/api/events")
 
 @app.route("/")
 def home():

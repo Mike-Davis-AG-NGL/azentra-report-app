@@ -1,8 +1,7 @@
 // import React from 'react'
 
 import { Delete, Download } from "@mui/icons-material"
-import { Alert, Box, Grid, Snackbar, Typography } from "@mui/material"
-import { ClickableCard } from "../ClickableCard"
+import { Alert, Box, Card, Grid, Snackbar, Typography } from "@mui/material"
 import { UseTheme } from "../../Controllers/UseTheme"
 import { useRef, useState } from "react"
 import axios from "axios"
@@ -106,44 +105,13 @@ export const AdminAccount = () => {
     }
 
     return (
-        <Box sx={{ flexGrow: 1, height: '100dvh', bgcolor: theme.primaryBg }}>
+        <Box sx={{ flexGrow: 1, height: '100dvh', bgcolor: theme.background }}>
             <Grid container>
-                <Grid size={{ lg: 6, md: 6, sm: 6, xs: 12 }}>
-                    <Box sx={{
-                        display: 'flex', justifyContent: { lg: 'flex-end', md: 'flex-end', sm: 'center', xs: 'center' },
-                        p: { lg: 8, md: 8, sm: 2, xs: 2 }
-                    }}>
-                        <ClickableCard onClick={downloadAccount} content={
-                            <Box>
-                                <Box>
-                                    <Download sx={{ color: theme.primaryText, fontSize: 250 }} />
-                                </Box>
-                                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                                    <Typography sx={{ fontWeight: 'bold', color: theme.secondaryText, fontSize: 15 }}>
-                                        Download Account Details
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        } />
-                    </Box>
-                </Grid>
-                <Grid size={{ lg: 6, md: 6, sm: 6, xs: 12 }}>
-                    <Box sx={{
-                        display: 'flex', justifyContent: { lg: 'flex-start', md: 'flex-start', sm: 'center', xs: 'center' },
-                        p: { lg: 8, md: 8, sm: 2, xs: 2 }
-                    }}>
-                        <ClickableCard onClick={deleteAccount} content={
-                            <Box>
-                                <Box>
-                                    <Delete sx={{ color: theme.error, fontSize: 250 }} />
-                                </Box>
-                                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                                    <Typography sx={{ fontWeight: 'bold', color: theme.secondaryText, fontSize: 15 }}>
-                                        Delete Account
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        } />
+                <Grid size={12}>
+                    <Box>
+                        <Card sx={{ mb: 2, bgcolor: theme.cardBg, borderColor: theme.cardBorder }}>
+                            Profile Card changes pending
+                        </Card>
                     </Box>
                 </Grid>
             </Grid>

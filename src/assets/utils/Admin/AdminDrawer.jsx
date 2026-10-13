@@ -8,6 +8,7 @@ import { useContext } from "react"
 import { AdminComponentContext } from "../../Controllers/AdminComponentContext"
 import { AdminAccount } from "./AdminAccount"
 import { UseTheme } from "../../Controllers/UseTheme"
+import { Instituitions } from "../Colleges/Instituitions"
 
 export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
     const { setActiveComponent } = useContext(AdminComponentContext)
@@ -16,6 +17,7 @@ export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
     const adminListContents = [
         { icon: <Dashboard sx={{ color: theme.secondaryText }} />, name: 'Dashboard', Component: <AdminDashboard /> },
         { icon: <Event sx={{ color: theme.secondaryText }} />, name: 'Events', Component: <AdminEvents /> },
+        { name: 'Instituitions', Component: <Instituitions setDrawerOpen={setDrawerOpen} />, isAccordion: true },
         { icon: <CoPresent sx={{ color: theme.secondaryText }} />, name: 'Resources', Component: <Resources /> },
         { icon: <Assessment sx={{ color: theme.secondaryText }} />, name: 'Reports', Component: <AdminReports /> },
         { icon: <ManageAccounts sx={{ color: theme.secondaryText }} />, name: 'Account Setting', Component: <AdminAccount /> }
@@ -27,15 +29,21 @@ export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
             <List>
                 {adminListContents.map((item) => (
                     <ListItem key={item.name} disablePadding>
-                        <ListItemButton onClick={() => {
-                            setActiveComponent(item.Component)
-                            setDrawerOpen(false)
-                        }}>
-                            <ListItemIcon>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.name} />
-                        </ListItemButton>
+                        {item.isAccordion ? (
+                            <Box sx={{ width: "100%" }} onClick={(event) => event.stopPropagation()}>
+                                {item.Component}
+                            </Box>
+                        ) : (
+                            <ListItemButton onClick={() => {
+                                setActiveComponent(item.Component)
+                                setDrawerOpen(false)
+                            }}>
+                                <ListItemIcon>
+                                    {item.icon}
+                                </ListItemIcon>
+                                <ListItemText primary={item.name} />
+                            </ListItemButton>
+                        )}
                     </ListItem>
                 ))}
             </List>
@@ -47,7 +55,7 @@ export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
                         icon: mode === "light" ? <DarkMode sx={{ color: theme.secondaryText }} /> : <LightMode sx={{ color: theme.secondaryText }} />,
                         name: 'Change Theme', function: toggleTheme
                     },
-                    { icon: <Logout sx={{ color: theme.secondaryText }}/>, name: 'Logout', function: logout },
+                    { icon: <Logout sx={{ color: theme.secondaryText }} />, name: 'Logout', function: logout },
                 ].map((item) => (
                     <ListItem key={item.name} disablePadding>
                         <ListItemButton onClick={item.function}>
@@ -59,6 +67,6 @@ export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
                     </ListItem>
                 ))}
             </List>
-        </Box>
+        </Box >
     )
 }

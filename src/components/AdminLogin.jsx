@@ -50,7 +50,7 @@ export const AdminLogin = () => {
                 const user = response.data.user
 
                 localStorage.setItem("token", token)
-                localStorage.setItem("user", user.role)
+                localStorage.setItem("role", user.role)
 
                 setSuccess("Login Successful")
                 setOpenSnackbar(true)

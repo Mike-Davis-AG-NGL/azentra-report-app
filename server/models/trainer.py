@@ -1,5 +1,5 @@
 from config.database import db
-from sqlalchemy import Enum
+from sqlalchemy import Enum # type: ignore
 
 class Trainer(db.Model):
     __tablename__ = "trainer"

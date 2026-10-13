@@ -1,8 +1,8 @@
 from flask import Blueprint, request
-import bcrypt
+import bcrypt # type: ignore
 import secrets
 import string
-from flask_jwt_extended import (create_access_token, jwt_required, get_jwt_identity)
+from flask_jwt_extended import (create_access_token, jwt_required, get_jwt_identity) # type: ignore
 
 from config.database import db
 from models.trainer import Trainer

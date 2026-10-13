@@ -1,10 +1,10 @@
 from flask import Blueprint, request
 import io
 import base64
-import qrcode
+import qrcode # type: ignore
 import hashlib
-import pyotp
-from flask_jwt_extended import (create_access_token, jwt_required, get_jwt_identity)
+import pyotp # type: ignore
+from flask_jwt_extended import (create_access_token, jwt_required, get_jwt_identity) # type: ignore
 
 from config.database import db
 from models.admin import Admin
