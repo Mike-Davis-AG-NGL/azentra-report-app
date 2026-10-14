@@ -7,7 +7,7 @@ import { UseTheme } from "../assets/Controllers/UseTheme"
 export const AdminHome = () => {
     const theme = UseTheme()
     return (
-        <Box sx={{ flexGrow: 1, height: '100dvh', bgcolor: theme.background }}>
+        <Box sx={{ flexGrow: 1, minHeight: '100dvh', height: 'auto', bgcolor: theme.background, overflowY: 'auto' }}>
             <Grid container>
                 <Grid size={12}>
                     <Admin />

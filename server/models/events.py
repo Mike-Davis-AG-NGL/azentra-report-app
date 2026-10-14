@@ -91,3 +91,10 @@ class Events(db.Model):
         onupdate=datetime.utcnow,
         nullable=False
     )
+ 
+    sessions = db.relationship(
+        "EventSession",
+        back_populates="event",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )

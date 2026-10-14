@@ -1,6 +1,6 @@
 // import React from 'react'
 
-import { EditSquare, PersonAdd, PersonRemove } from "@mui/icons-material";
+import { Add, EditSquare, Remove } from "@mui/icons-material";
 import { Alert, Backdrop, Box, Button, ButtonGroup, Card, Grid, Paper, Snackbar, Typography } from "@mui/material";
 import { DataGrid, GridCell } from "@mui/x-data-grid";
 import { UseTheme } from "../../Controllers/UseTheme";
@@ -177,13 +177,12 @@ export const College = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
-                          borderColor: theme.secondaryText,
                           "&.Mui-disabled": {
                             color: theme.mutedText
                           },
                         }}
                       >
-                        <PersonAdd />
+                        <Add />
                       </Button>
                       <Button
                         onClick={() => {
@@ -197,7 +196,6 @@ export const College = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
-                          borderColor: theme.secondaryText,
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
@@ -217,13 +215,12 @@ export const College = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
-                          borderColor: theme.secondaryText,
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
                         }}
                       >
-                        <PersonRemove />
+                        <Remove />
                       </Button>
                     </ButtonGroup>
                   </Box>

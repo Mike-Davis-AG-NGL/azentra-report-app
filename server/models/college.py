@@ -77,8 +77,8 @@ class College(db.Model):
 
     departments = db.relationship(
         "Department",
-        back_populates="college",
-        cascade="all, delete-orphan"
+        secondary="college_department",
+        back_populates="colleges"
     )
 
     events = db.relationship(

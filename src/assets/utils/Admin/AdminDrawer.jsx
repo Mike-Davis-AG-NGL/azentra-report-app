@@ -24,7 +24,11 @@ export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
     ]
 
     return (
-        <Box sx={{ width: 250, height: '100%', display: 'flex', flexDirection: 'column' }}
+        <Box sx={{
+            width: 250, minHeight: '100dvh', height: 'auto',
+            bgcolor: theme.background, overflowY: 'auto',
+            display: 'flex', flexDirection: 'column'
+        }}
             role="presentation" onClick={() => setDrawerOpen(false)}>
             <List>
                 {adminListContents.map((item) => (

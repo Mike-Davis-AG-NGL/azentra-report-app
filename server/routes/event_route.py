@@ -59,7 +59,9 @@ def validate_college_department(college_id, department_id):
     if department_id is not None:
         if not isinstance(department_id, int) or isinstance(department_id, bool):
             return None, None, (
-                jsonify({"message": "Department ID must be an integer or null"}), 400
+                jsonify({
+                    "message": "Department ID must be an integer or null"
+                }), 400
             )
 
         department = db.session.get(Department, department_id)
@@ -69,10 +71,17 @@ def validate_college_department(college_id, department_id):
                 jsonify({"message": "Department not found"}), 404
             )
 
-        if department.college_id != college_id:
+        department_college_ids = {
+            item.id for item in department.colleges
+        }
+
+        if college.id not in department_college_ids:
             return None, None, (
                 jsonify({
-                    "message": "The selected department does not belong to this college"
+                    "message": (
+                        "The selected department is not associated "
+                        "with this college"
+                    )
                 }), 400
             )
 

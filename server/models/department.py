@@ -1,6 +1,12 @@
 from datetime import datetime
 from config.database import db
 
+college_department = db.Table(
+    "college_department",
+    db.Column("college_id", db.Integer, db.ForeignKey("college.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("department_id", db.Integer, db.ForeignKey("department.id", ondelete="CASCADE"), primary_key=True)
+)
+
 class Department(db.Model):
     __tablename__ = "department"
 
@@ -19,10 +25,10 @@ class Department(db.Model):
         nullable=True
     )
 
-    college_id = db.Column(
-        db.Integer,
-        db.ForeignKey("college.id"),
-        nullable=False
+    colleges = db.relationship(
+        "College",
+        secondary=college_department,
+        back_populates="departments"
     )
 
     status = db.Column(
@@ -37,11 +43,6 @@ class Department(db.Model):
         nullable=False
     )
 
-    college = db.relationship(
-        "College",
-        back_populates="departments"
-    )
-
     events = db.relationship(
         "Events",
         back_populates="department"
@@ -49,8 +50,7 @@ class Department(db.Model):
 
     __table_args__ = (
         db.UniqueConstraint(
-            "college_id",
-            "department_name",
-            name="uq_department_college_name"
+            "department_name", 
+            name="uq_department_name"
         ),
     )
