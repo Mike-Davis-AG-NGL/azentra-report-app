@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Alert, Backdrop, Box, Button, ButtonGroup, Card, Grid, Paper, Snackbar, Typography, } from "@mui/material";
 import { DataGrid, GridCell } from "@mui/x-data-grid";
-import { EditSquare, PersonRemove, SimCardDownload } from "@mui/icons-material";
+import { EditSquare, PersonAdd, PersonRemove, SimCardDownload } from "@mui/icons-material";
 import { UseTheme } from "../../Controllers/UseTheme";
 import axios from "axios";
 import { EditTrainer } from "./EditTrainer";
 import html2canvas from "html2canvas"
+import { AddTrainer } from "./AddTrainer";
 
 const columns = [
   {
@@ -84,12 +85,19 @@ export const ManageTrainer = () => {
   const [selectedTrainer, setSelectedTrainer] = useState(null)
   const [selectedRows, setSelectedRows] = useState([])
 
-  // Backdrop
+  // Edit Trainer Backdrop
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const handleCloseBackdrop = () => {
     setOpenBackdrop(false)
     setSelectedTrainer(null)
   }
+
+  // Add Trainer Backdrop
+  const [openAddBackdrop, setOpenAddBackdrop] = useState(false);
+
+  const handleCloseAddBackdrop = () => {
+    setOpenAddBackdrop(false);
+  };
 
   // snackbar
   const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -115,6 +123,12 @@ export const ManageTrainer = () => {
       setOpenBackdrop(true);
     }
   };
+
+
+  const handleAddTrainer = () => {
+    setOpenAddBackdrop(true);
+  };
+
 
   useEffect(() => {
     getTrainers();
@@ -289,12 +303,25 @@ export const ManageTrainer = () => {
                   >
                     <ButtonGroup>
                       <Button
+                        onClick={handleAddTrainer}
+                        sx={{
+                          color: theme.secondaryText,
+                          bgcolor: theme.secondaryAccent,
+                          border: 'none',
+                          "&.Mui-disabled": {
+                            color: theme.mutedText
+                          },
+                        }}
+                      >
+                        <PersonAdd />
+                      </Button>
+                      <Button
                         onClick={handleDownloadTrainer}
                         disabled={selectedRows.length !== 1 || downloadLoading}
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
-                          borderColor: theme.secondaryText,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText
                           },
@@ -308,7 +335,7 @@ export const ManageTrainer = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
-                          borderColor: theme.secondaryText,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
@@ -322,7 +349,7 @@ export const ManageTrainer = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
-                          borderColor: theme.secondaryText,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
@@ -576,6 +603,20 @@ export const ManageTrainer = () => {
             </Button>
           </Box>
         </Card>
+      </Backdrop>
+      <Backdrop
+        sx={(themes) => ({ color: theme.primaryText, zIndex: themes.zIndex.drawer + 1 })}
+        open={openAddBackdrop} onClick={handleCloseAddBackdrop}
+      >
+        <Box onClick={(event) => event.stopPropagation()}>
+          <AddTrainer
+            onClose={handleCloseAddBackdrop}
+            onCreated={async () => {
+              await getTrainers();
+              setSelectedRows([]);
+            }}
+          />
+        </Box>
       </Backdrop>
       <Box
         sx={{

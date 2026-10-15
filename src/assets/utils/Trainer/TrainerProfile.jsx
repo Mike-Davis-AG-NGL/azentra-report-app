@@ -10,7 +10,7 @@ export const TrainerProfile = () => {
       <Grid container>
         <Grid size={12}>
           <Typography variant="h5" sx={{ color: theme.primaryText, fontWeight: "bold", mb: 2 }}>
-            Trainer Management
+            Trainer Profile
           </Typography>
         </Grid>
         <Grid size={12}>

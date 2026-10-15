@@ -208,6 +208,7 @@ export const Department = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
@@ -231,6 +232,7 @@ export const Department = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
@@ -254,6 +256,7 @@ export const Department = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },

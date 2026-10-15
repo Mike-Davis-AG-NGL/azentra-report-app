@@ -10,7 +10,7 @@ import { SelectUI } from "../SelectUI"
 import axios from "axios"
 import html2canvas from "html2canvas"
 
-export const AddTrainer = () => {
+export const AddTrainer = ({ onClose, onCreated }) => {
     const trainerCardRef = useRef(null)
     const theme = UseTheme()
     const [fname, setFname] = useState('')
@@ -37,9 +37,13 @@ export const AddTrainer = () => {
         setOpenSnackbar(false)
     }
 
-    // Backdrop
-    const [openBackdrop, setOpenBackdrop] = useState(false);
-    const handleCloseBackdrop = () => setOpenBackdrop(false)
+    // Credentials Backdrop
+    const [openCredentialsBackdrop, setOpenCredentialsBackdrop] =
+        useState(false);
+
+    const handleCloseCredentialsBackdrop = () => {
+        setOpenCredentialsBackdrop(false);
+    };
 
     const clearForm = () => {
         setFname('')
@@ -92,7 +96,12 @@ export const AddTrainer = () => {
                 email: response.data.credentials.email,
                 temporary_password: response.data.credentials.temporary_password
             })
-            setOpenBackdrop(true)
+            clearForm();
+
+            if (onCreated) {
+                await onCreated();
+            }
+            setOpenCredentialsBackdrop(true)
             clearForm()
         } catch (error) {
             setSuccess('')
@@ -183,7 +192,10 @@ export const AddTrainer = () => {
             </Snackbar>
             <Backdrop
                 sx={(themes) => ({ color: theme.primaryText, zIndex: themes.zIndex.drawer + 1 })}
-                open={openBackdrop}
+                open={openCredentialsBackdrop} onClick={() => {
+                    handleCloseCredentialsBackdrop();
+                    onClose?.();
+                }}
             >
                 <Card
                     variant="outlined"
@@ -214,7 +226,7 @@ export const AddTrainer = () => {
                                 Trainer email: <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.email}</span>
                             </Typography>
                             <Typography variant="h5" component="div">
-                                <span style={{color: theme.secondaryText}}>Trainer ID:</span> <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.trainer_id}</span>
+                                <span style={{ color: theme.secondaryText }}>Trainer ID:</span> <br /><span style={{ color: theme.primaryText }}>{trainerCredentials.trainer_id}</span>
                             </Typography>
                             <Typography sx={{ color: theme.secondaryText, mb: 1.5 }}>
                                 Temporary password: <br />
@@ -228,11 +240,11 @@ export const AddTrainer = () => {
                         </CardContent>
                     </Box>
                     <CardActions sx={{ display: { lg: 'flex', md: 'flex', sm: 'none', xs: 'none' }, justifyContent: 'center' }}>
-                        <ButtonX name="Close" onClick={handleCloseBackdrop} />
+                        <ButtonX name="Close" onClick={handleCloseCredentialsBackdrop} />
                         <ButtonX name="Print" onClick={handlePrint} />
                     </CardActions>
                     <CardActions sx={{ display: { lg: 'none', md: 'none', sm: 'flex', xs: 'flex' }, justifyContent: 'center' }}>
-                        <ButtonXS name="Close" onClick={handleCloseBackdrop} />
+                        <ButtonXS name="Close" onClick={handleCloseCredentialsBackdrop} />
                         <ButtonXS name="Print" onClick={handlePrint} />
                     </CardActions>
                 </Card>

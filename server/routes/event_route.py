@@ -230,7 +230,7 @@ def get_event_by_id(id):
 
     return jsonify({"event": event_to_dict(event)}), 200
 
-@events_crud.patch("/<int:id>")
+@events_crud.patch("/update/<int:id>")
 def edit_event(id):
     event = db.session.get(Events, id)
 
@@ -355,7 +355,7 @@ def edit_event(id):
             "message": "Event could not be updated because a referenced record is invalid"
         }), 409
     
-@events_crud.delete("/<int:id>")
+@events_crud.delete("/delete/<int:id>")
 def delete_event(id):
     event = db.session.get(Events, id)
 

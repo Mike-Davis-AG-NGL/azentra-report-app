@@ -18,7 +18,7 @@ export const AdminDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
         { icon: <Dashboard sx={{ color: theme.secondaryText }} />, name: 'Dashboard', Component: <AdminDashboard /> },
         { icon: <Event sx={{ color: theme.secondaryText }} />, name: 'Events', Component: <AdminEvents /> },
         { name: 'Instituitions', Component: <Instituitions setDrawerOpen={setDrawerOpen} />, isAccordion: true },
-        { icon: <CoPresent sx={{ color: theme.secondaryText }} />, name: 'Resources', Component: <Resources /> },
+        { name: 'Trainers', Component: <Resources setDrawerOpen={setDrawerOpen} />, isAccordion: true },
         { icon: <Assessment sx={{ color: theme.secondaryText }} />, name: 'Reports', Component: <AdminReports /> },
         { icon: <ManageAccounts sx={{ color: theme.secondaryText }} />, name: 'Account Setting', Component: <AdminAccount /> }
     ]

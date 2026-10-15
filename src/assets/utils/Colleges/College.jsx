@@ -177,6 +177,7 @@ export const College = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText
                           },
@@ -196,6 +197,7 @@ export const College = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
@@ -215,6 +217,7 @@ export const College = () => {
                         sx={{
                           color: theme.secondaryText,
                           bgcolor: theme.secondaryAccent,
+                          border: 'none',
                           "&.Mui-disabled": {
                             color: theme.mutedText,
                           },
