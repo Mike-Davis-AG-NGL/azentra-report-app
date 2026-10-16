@@ -75,8 +75,16 @@ export const Login = () => {
             }
 
             remember
-                ? (localStorage.setItem('token', token), localStorage.setItem('role', response.data.user.role))
-                : (sessionStorage.setItem('token', token), sessionStorage.setItem('role', response.data.user.role));
+                ? (
+                    localStorage.setItem('token', token),
+                    localStorage.setItem('role', response.data.user.role),
+                    localStorage.setItem('user', JSON.stringify(response.data.user))
+                )
+                : (
+                    sessionStorage.setItem('token', token), 
+                    sessionStorage.setItem('role', response.data.user.role),
+                    sessionStorage.setItem('user', JSON.stringify(response.data.user))
+                );
 
             if (response.data.must_change_password === true || response.data.must_change_password === 1) {
                 setOpenBackdrop(true)

@@ -4,7 +4,7 @@ import { UseTheme } from "../../Controllers/UseTheme";
 import { ButtonX } from "../ButtonX";
 import axios from "axios";
 
-export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], departments = [], }) => {
+export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], departments = [], trainers = [] }) => {
     const theme = UseTheme();
 
     const [eventName, setEventName] = useState("");
@@ -12,6 +12,7 @@ export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], depar
     const [eventDescription, setEventDescription] = useState("");
     const [collegeId, setCollegeId] = useState("");
     const [departmentId, setDepartmentId] = useState("");
+    const [trainerId, setTrainerId] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [registrationRequired, setRegistrationRequired] = useState(false);
@@ -35,6 +36,7 @@ export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], depar
             setEventDescription(event.event_description || "");
             setCollegeId(event.college_id ?? "");
             setDepartmentId(event.department_id ?? "");
+            setTrainerId(event.trainer_id ?? "");
             setStartDate(event.start_date?.slice(0, 10) || "");
             setEndDate(event.end_date?.slice(0, 10) || "");
             setRegistrationRequired(
@@ -47,6 +49,7 @@ export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], depar
             setEventDescription("");
             setCollegeId("");
             setDepartmentId("");
+            setTrainerId("");
             setStartDate("");
             setEndDate("");
             setRegistrationRequired(false);
@@ -60,6 +63,7 @@ export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], depar
         setEventDescription("");
         setCollegeId("");
         setDepartmentId("");
+        setTrainerId("");
         setStartDate("");
         setEndDate("");
         setRegistrationRequired(false);
@@ -96,6 +100,7 @@ export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], depar
             department_id: departmentId
                 ? Number(departmentId)
                 : null,
+            trainer_id: trainerId ? Number(trainerId) : null,
             start_date: startDate,
             end_date: endDate,
             registration_required: registrationRequired,
@@ -569,6 +574,67 @@ export const FormEventAdmin = ({ event, onClose, onUpdated, colleges = [], depar
                                             )}
                                         </Select>
                                     </FormControl>
+
+                                    <FormControl
+                                        fullWidth
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                color: theme.primaryText,
+                                                "& fieldset": {
+                                                    borderColor: theme.cardBorder,
+                                                },
+                                                "&:hover fieldset": {
+                                                    borderColor: theme.primaryAccent,
+                                                },
+                                                "&.Mui-focused fieldset": {
+                                                    borderColor: theme.primaryAccent,
+                                                },
+                                            },
+                                            "& .MuiInputLabel-root": {
+                                                color: theme.secondaryText,
+                                            },
+                                            "& .MuiInputLabel-root.Mui-focused": {
+                                                color: theme.primaryAccent,
+                                            },
+                                            "& .MuiSvgIcon-root": {
+                                                color: theme.secondaryText,
+                                            },
+                                        }}
+                                    >
+                                        <InputLabel>Assign Trainer</InputLabel>
+
+                                        <Select
+                                            label="Assign Trainer"
+                                            value={trainerId}
+                                            onChange={(e) => setTrainerId(e.target.value)}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    sx: {
+                                                        bgcolor: theme.cardBg,
+                                                        "& .MuiMenuItem-root": {
+                                                            color: theme.primaryText,
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            <MenuItem value="">
+                                                Not Assigned
+                                            </MenuItem>
+
+                                            {trainers
+                                                .filter((trainer) => trainer.status === "Active")
+                                                .map((trainer) => (
+                                                    <MenuItem
+                                                        key={trainer.id}
+                                                        value={trainer.id}
+                                                    >
+                                                        {trainer.fname} {trainer.lname}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                    </FormControl>
+
                                     <Grid container spacing={2}>
                                         <Grid size={{ xs: 12, sm: 6 }}>
                                             <TextField

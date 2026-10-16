@@ -6,6 +6,7 @@ from config.database import db
 from models.events import Events
 from models.college import College
 from models.department import Department
+from models.trainer import Trainer
 
 events_crud = Blueprint("events_crud", __name__)
 
@@ -20,6 +21,11 @@ def event_to_dict(event):
         "department_name": (
             event.department.department_name
             if event.department else None
+        ),
+        "trainer_id": event.trainer_id,
+        "trainer_name": (
+            f"{event.trainer.fname} {event.trainer.lname}"
+            if event.trainer else None
         ),
         "event_description": event.event_description,
         "start_date": event.start_date.isoformat() if event.start_date else None,
@@ -95,6 +101,7 @@ def create_event():
     event_type = data.get("event_type")
     college_id = data.get("college_id")
     department_id = data.get("department_id")
+    trainer_id = data.get("trainer_id")
     start_date = parse_date(data.get("start_date"))
     end_date = parse_date(data.get("end_date"))
     event_description = data.get("event_description")
@@ -162,6 +169,19 @@ def create_event():
         college_id, department_id
     )
 
+    trainer = None
+
+    if trainer_id is not None:
+        if not isinstance(trainer_id, int) or isinstance(trainer_id, bool):
+            return jsonify({
+                "message": "Trainer ID must be an integer or null"
+            }), 400
+
+        trainer = db.session.get(Trainer, trainer_id)
+
+        if not trainer:
+            return jsonify({"message": "Trainer not found"}), 404
+
     if error:
         return error
 
@@ -170,6 +190,7 @@ def create_event():
         event_type=event_type.strip(),
         college_id=college.id,
         department_id=department.id if department else None,
+        trainer_id=trainer.id if trainer else None,
         event_description=event_description,
         start_date=start_date,
         end_date=end_date,
@@ -262,6 +283,24 @@ def edit_event(id):
 
     college_id = data.get("college_id", event.college_id)
     department_id = data.get("department_id", event.department_id)
+
+    if "trainer_id" in data:
+        trainer_id = data["trainer_id"]
+
+        if trainer_id is None:
+            event.trainer_id = None
+        else:
+            if not isinstance(trainer_id, int) or isinstance(trainer_id, bool):
+                return jsonify({
+                    "message": "Trainer ID must be an integer or null"
+                }), 400
+
+            trainer = db.session.get(Trainer, trainer_id)
+
+            if not trainer:
+                return jsonify({"message": "Trainer not found"}), 404
+
+            event.trainer_id = trainer.id
 
     if department_id == "":
         department_id = None

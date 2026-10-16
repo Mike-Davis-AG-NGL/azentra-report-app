@@ -64,3 +64,8 @@ class Trainer(db.Model):
         default = True,
         nullable = False
     )
+
+    events = db.relationship(
+        "Events",
+        back_populates="trainer"
+    )

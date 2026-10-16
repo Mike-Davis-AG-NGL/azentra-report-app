@@ -51,6 +51,7 @@ export const AdminEvents = () => {
 
   const [eventType, setEventType] = useState('');
   const [college, setCollege] = useState('')
+  const [trainers, setTrainers] = useState([])
   const [status, setStatus] = useState('')
 
   const [events, setEvents] = useState([])
@@ -67,6 +68,7 @@ export const AdminEvents = () => {
   const [eventToDelete, setEventToDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
 
+  // snackbar
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -84,7 +86,7 @@ export const AdminEvents = () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token")
     try {
       setLoading(true)
-      const [eventRes, collegeRes, departmentRes] = await Promise.all([
+      const [eventRes, collegeRes, departmentRes, trainerRes] = await Promise.all([
         axios.get('http://localhost:5000/api/events/', {
           headers: {
             Authorization: `Bearer ${token}`
@@ -99,11 +101,17 @@ export const AdminEvents = () => {
           headers: {
             Authorization: `Bearer ${token}`
           }
+        }),
+        axios.get('http://localhost:5000/api/auth/trainer/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         })
       ])
       setEvents(eventRes.data.events || [])
       setColleges(collegeRes.data.colleges || [])
       setDepartments(departmentRes.data.departments || [])
+      setTrainers(trainerRes.data.trainers || [])
     } catch (error) {
       setError(error.response?.data?.message || "Failed to load events")
       setSuccess("")
@@ -568,7 +576,7 @@ export const AdminEvents = () => {
                             {event.event_name}
                           </Typography>
                           <Typography sx={{ color: theme.primaryText }}>
-                            {event.event_type}
+                            {event.event_type} by {event.trainer_name || "Azentra Global"}
                           </Typography>
                           <Typography sx={{ color: theme.primaryText }}>
                             {event.college_name}
@@ -621,6 +629,7 @@ export const AdminEvents = () => {
             event={selectedEvent}
             colleges={colleges}
             departments={departments}
+            trainers={trainers}
             onClose={() => setFormOpen(false)}
             onUpdated={loadData}
           />

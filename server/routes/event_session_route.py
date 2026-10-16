@@ -181,6 +181,25 @@ def get_event_sessions(event_id):
         "sessions": [session_to_dict(session) for session in sessions]
     }), 200
 
+@event_sessions_crud.get("/my")
+def get_my_event_sessions():
+    trainer_id = request.args.get("trainer_id", type=int)
+
+    if not trainer_id:
+        return jsonify({
+            "message": "Trainer ID is required"
+        }), 400
+
+    sessions = EventSession.query.filter_by(
+        trainer_id=trainer_id
+    ).order_by(
+        EventSession.session_date.asc(),
+        EventSession.start_time.asc()
+    ).all()
+
+    return jsonify({
+        "sessions": [session_to_dict(session) for session in sessions]
+    }), 200
 
 @event_sessions_crud.get("/s/<int:session_id>")
 def get_event_session(session_id):

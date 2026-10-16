@@ -19,13 +19,16 @@ export const TrainerDrawer = ({ mode, toggleTheme, logout, setDrawerOpen }) => {
         { icon: <Event sx={{ color: theme.secondaryText }} />, name: 'Events', Component: <TrainerEvents /> },
         { icon: <Insights sx={{ color: theme.secondaryText }} />, name: 'Performance', Component: <TrainerPerformances /> },
         { icon: <Comment sx={{ color: theme.secondaryText }} />, name: 'Feedback Summary', Component: <TrainerFeedback /> },
-        { icon: <Assessment sx={{ color: theme.secondaryText }} />, name: 'Reports', Component: <TrainerReport /> },
         { icon: <AccountBox sx={{ color: theme.secondaryText }} />, name: 'Profile', Component: <TrainerProfile /> }
     ]
 
     return (
         <Box
-            sx={{ width: 250, height: '100%', display: 'flex', flexDirection: 'column' }}
+            sx={{
+                width: 250, minHeight: '100dvh', height: 'auto',
+                bgcolor: theme.background, overflowY: 'auto',
+                display: 'flex', flexDirection: 'column'
+            }}
             role="presentation"
         >
             <List>

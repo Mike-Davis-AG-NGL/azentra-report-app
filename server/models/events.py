@@ -67,6 +67,18 @@ class Events(db.Model):
         default="Draft",
         nullable=False
     )
+
+    trainer_id = db.Column(
+        db.Integer,
+        db.ForeignKey("trainer.id"),
+        nullable=True
+    )
+
+    trainer = db.relationship(
+        "Trainer",
+        back_populates="events"
+    )
+    
     report_status = db.Column(
         db.String(20),
         default="Not Started",
