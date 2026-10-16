@@ -482,28 +482,28 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 fullWidth
                                                 disabled
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.mutedText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-disabled": {
+                                                        color: theme.mutedText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
-                                                        color: theme.primaryText,
+                                                        color: theme.mutedText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
-                                                            borderColor: theme.primaryAccent,
+                                                            borderColor: theme.mutedText,
                                                             borderWidth: "2px",
                                                         },
-                                                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                                                            borderColor: theme.primaryAccent,
+                                                        "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                                                            borderColor: theme.mutedText,
                                                             borderWidth: "2px",
                                                         },
-                                                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                                            borderColor: theme.primaryAccent,
-                                                            borderWidth: "2px",
+                                                        "& .MuiInputBase-input.Mui-disabled": {
+                                                            WebkitTextFillColor: theme.mutedText,
+                                                            color: theme.mutedText,
                                                         },
                                                     },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
-                                                    },
-                                                }}
-                                            />
-
+                                                }} />
                                             <TextField
                                                 label="Session Title"
                                                 value={sessionTitle}
@@ -513,6 +513,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 required
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -528,15 +534,9 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderWidth: "2px",
                                                         },
                                                     },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
-                                                    },
-                                                }}
-                                            />
-
+                                                }} />
                                             <Grid container spacing={2}>
-                                                <Grid size={{ xs: 12, sm: 6 }}>
+                                                <Grid size={12}>
                                                     <TextField
                                                         label="Date of Session"
                                                         type="date"
@@ -556,55 +556,35 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                         sx={{
                                                             "& .MuiOutlinedInput-root": {
                                                                 color: theme.primaryText,
-                                                                "& .MuiOutlinedInput-notchedOutline": {
+                                                                "& fieldset": {
+                                                                    borderColor: theme.cardBorder,
+                                                                    borderWidth: "2px",
+                                                                },
+                                                                "&:hover fieldset": {
                                                                     borderColor: theme.primaryAccent,
                                                                     borderWidth: "2px",
                                                                 },
-                                                                "&:hover .MuiOutlinedInput-notchedOutline": {
-                                                                    borderColor: theme.primaryAccent,
-                                                                    borderWidth: "2px",
-                                                                },
-                                                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                                                "&.Mui-focused fieldset": {
                                                                     borderColor: theme.primaryAccent,
                                                                     borderWidth: "2px",
                                                                 },
                                                             },
-                                                            "& .MuiInputBase-input::placeholder": {
-                                                                color: theme.secondaryText,
-                                                                opacity: 1,
-                                                            },
-                                                        }}
-                                                    />
-                                                </Grid>
-
-                                                <Grid size={{ xs: 12, sm: 6 }}>
-                                                    <TextField
-                                                        label="Duration"
-                                                        value={duration}
-                                                        fullWidth
-                                                        disabled
-                                                        sx={{
-                                                            "& .MuiOutlinedInput-root": {
+                                                            "& .MuiInputBase-input": {
                                                                 color: theme.primaryText,
-                                                                "& .MuiOutlinedInput-notchedOutline": {
-                                                                    borderColor: theme.primaryAccent,
-                                                                    borderWidth: "2px",
-                                                                },
-                                                                "&:hover .MuiOutlinedInput-notchedOutline": {
-                                                                    borderColor: theme.primaryAccent,
-                                                                    borderWidth: "2px",
-                                                                },
-                                                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                                                    borderColor: theme.primaryAccent,
-                                                                    borderWidth: "2px",
-                                                                },
+                                                                colorScheme: localStorage.getItem('themeMode') || sessionStorage.getItem('themeMode'),
                                                             },
-                                                            "& .MuiInputBase-input::placeholder": {
+                                                            "& .MuiInputLabel-root": {
                                                                 color: theme.secondaryText,
+                                                            },
+                                                            "& .MuiInputLabel-root.Mui-focused": {
+                                                                color: theme.primaryAccent,
+                                                            },
+                                                            "& input::-webkit-calendar-picker-indicator": {
+                                                                filter: "none",
+                                                                cursor: "pointer",
                                                                 opacity: 1,
                                                             },
-                                                        }}
-                                                    />
+                                                        }} />
                                                 </Grid>
 
                                                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -623,21 +603,32 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                         sx={{
                                                             "& .MuiOutlinedInput-root": {
                                                                 color: theme.primaryText,
-                                                                "& .MuiOutlinedInput-notchedOutline": {
+                                                                "& fieldset": {
+                                                                    borderColor: theme.cardBorder,
+                                                                    borderWidth: "2px",
+                                                                },
+                                                                "&:hover fieldset": {
                                                                     borderColor: theme.primaryAccent,
                                                                     borderWidth: "2px",
                                                                 },
-                                                                "&:hover .MuiOutlinedInput-notchedOutline": {
-                                                                    borderColor: theme.primaryAccent,
-                                                                    borderWidth: "2px",
-                                                                },
-                                                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                                                "&.Mui-focused fieldset": {
                                                                     borderColor: theme.primaryAccent,
                                                                     borderWidth: "2px",
                                                                 },
                                                             },
-                                                            "& .MuiInputBase-input::placeholder": {
+                                                            "& .MuiInputBase-input": {
+                                                                color: theme.primaryText,
+                                                                colorScheme: localStorage.getItem('themeMode') || sessionStorage.getItem('themeMode'),
+                                                            },
+                                                            "& .MuiInputLabel-root": {
                                                                 color: theme.secondaryText,
+                                                            },
+                                                            "& .MuiInputLabel-root.Mui-focused": {
+                                                                color: theme.primaryAccent,
+                                                            },
+                                                            "& input::-webkit-calendar-picker-indicator": {
+                                                                filter: "none",
+                                                                cursor: "pointer",
                                                                 opacity: 1,
                                                             },
                                                         }}
@@ -660,21 +651,32 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                         sx={{
                                                             "& .MuiOutlinedInput-root": {
                                                                 color: theme.primaryText,
-                                                                "& .MuiOutlinedInput-notchedOutline": {
+                                                                "& fieldset": {
+                                                                    borderColor: theme.cardBorder,
+                                                                    borderWidth: "2px",
+                                                                },
+                                                                "&:hover fieldset": {
                                                                     borderColor: theme.primaryAccent,
                                                                     borderWidth: "2px",
                                                                 },
-                                                                "&:hover .MuiOutlinedInput-notchedOutline": {
-                                                                    borderColor: theme.primaryAccent,
-                                                                    borderWidth: "2px",
-                                                                },
-                                                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                                                "&.Mui-focused fieldset": {
                                                                     borderColor: theme.primaryAccent,
                                                                     borderWidth: "2px",
                                                                 },
                                                             },
-                                                            "& .MuiInputBase-input::placeholder": {
+                                                            "& .MuiInputBase-input": {
+                                                                color: theme.primaryText,
+                                                                colorScheme: localStorage.getItem('themeMode') || sessionStorage.getItem('themeMode'),
+                                                            },
+                                                            "& .MuiInputLabel-root": {
                                                                 color: theme.secondaryText,
+                                                            },
+                                                            "& .MuiInputLabel-root.Mui-focused": {
+                                                                color: theme.primaryAccent,
+                                                            },
+                                                            "& input::-webkit-calendar-picker-indicator": {
+                                                                filter: "none",
+                                                                cursor: "pointer",
                                                                 opacity: 1,
                                                             },
                                                         }}
@@ -760,6 +762,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 }}
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -774,10 +782,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderColor: theme.primaryAccent,
                                                             borderWidth: "2px",
                                                         },
-                                                    },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
                                                     },
                                                 }}
                                             />
@@ -790,6 +794,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 }
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -804,10 +814,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderColor: theme.primaryAccent,
                                                             borderWidth: "2px",
                                                         },
-                                                    },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
                                                     },
                                                 }}
                                             />
@@ -822,6 +828,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 minRows={3}
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -836,10 +848,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderColor: theme.primaryAccent,
                                                             borderWidth: "2px",
                                                         },
-                                                    },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
                                                     },
                                                 }}
                                             />
@@ -872,6 +880,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -886,10 +900,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -908,6 +918,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -922,10 +938,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -944,6 +956,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -958,10 +976,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -980,6 +994,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -994,10 +1014,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -1020,6 +1036,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -1034,10 +1056,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -1059,6 +1077,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -1073,10 +1097,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -1098,6 +1118,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                     fullWidth
                                                     sx={{
+                                                        "& .MuiInputLabel-root": {
+                                                            color: theme.secondaryText,
+                                                        },
+                                                        "& .MuiInputLabel-root.Mui-focused": {
+                                                            color: theme.secondaryText,
+                                                        },
                                                         "& .MuiOutlinedInput-root": {
                                                             color: theme.primaryText,
                                                             "& .MuiOutlinedInput-notchedOutline": {
@@ -1112,10 +1138,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderColor: theme.primaryAccent,
                                                                 borderWidth: "2px",
                                                             },
-                                                        },
-                                                        "& .MuiInputBase-input::placeholder": {
-                                                            color: theme.secondaryText,
-                                                            opacity: 1,
                                                         },
                                                     }}
                                                 />
@@ -1228,6 +1250,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 }
                                                                 fullWidth
                                                                 sx={{
+                                                                    "& .MuiInputLabel-root": {
+                                                                        color: theme.secondaryText,
+                                                                    },
+                                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                                        color: theme.secondaryText,
+                                                                    },
                                                                     "& .MuiOutlinedInput-root": {
                                                                         color: theme.primaryText,
                                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1242,10 +1270,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderColor: theme.primaryAccent,
                                                                             borderWidth: "2px",
                                                                         },
-                                                                    },
-                                                                    "& .MuiInputBase-input::placeholder": {
-                                                                        color: theme.secondaryText,
-                                                                        opacity: 1,
                                                                     },
                                                                 }}
                                                             />
@@ -1264,6 +1288,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 minRows={2}
                                                                 fullWidth
                                                                 sx={{
+                                                                    "& .MuiInputLabel-root": {
+                                                                        color: theme.secondaryText,
+                                                                    },
+                                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                                        color: theme.secondaryText,
+                                                                    },
                                                                     "& .MuiOutlinedInput-root": {
                                                                         color: theme.primaryText,
                                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1278,10 +1308,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderColor: theme.primaryAccent,
                                                                             borderWidth: "2px",
                                                                         },
-                                                                    },
-                                                                    "& .MuiInputBase-input::placeholder": {
-                                                                        color: theme.secondaryText,
-                                                                        opacity: 1,
                                                                     },
                                                                 }}
                                                             />
@@ -1305,6 +1331,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 }}
                                                                 fullWidth
                                                                 sx={{
+                                                                    "& .MuiInputLabel-root": {
+                                                                        color: theme.secondaryText,
+                                                                    },
+                                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                                        color: theme.secondaryText,
+                                                                    },
                                                                     "& .MuiOutlinedInput-root": {
                                                                         color: theme.primaryText,
                                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1319,10 +1351,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderColor: theme.primaryAccent,
                                                                             borderWidth: "2px",
                                                                         },
-                                                                    },
-                                                                    "& .MuiInputBase-input::placeholder": {
-                                                                        color: theme.secondaryText,
-                                                                        opacity: 1,
                                                                     },
                                                                 }}
                                                             />
@@ -1340,6 +1368,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 placeholder="e.g. Top team: 98/100"
                                                                 fullWidth
                                                                 sx={{
+                                                                    "& .MuiInputLabel-root": {
+                                                                        color: theme.secondaryText,
+                                                                    },
+                                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                                        color: theme.secondaryText,
+                                                                    },
                                                                     "& .MuiOutlinedInput-root": {
                                                                         color: theme.primaryText,
                                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1354,10 +1388,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderColor: theme.primaryAccent,
                                                                             borderWidth: "2px",
                                                                         },
-                                                                    },
-                                                                    "& .MuiInputBase-input::placeholder": {
-                                                                        color: theme.secondaryText,
-                                                                        opacity: 1,
                                                                     },
                                                                 }}
                                                             />
@@ -1386,6 +1416,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 minRows={2}
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1400,10 +1436,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderColor: theme.primaryAccent,
                                                             borderWidth: "2px",
                                                         },
-                                                    },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
                                                     },
                                                 }}
                                             />
@@ -1423,6 +1455,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 }}
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1437,10 +1475,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderColor: theme.primaryAccent,
                                                             borderWidth: "2px",
                                                         },
-                                                    },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
                                                     },
                                                 }}
                                             />
@@ -1455,6 +1489,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 minRows={2}
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1469,10 +1509,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderColor: theme.primaryAccent,
                                                             borderWidth: "2px",
                                                         },
-                                                    },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
                                                     },
                                                 }}
                                             />
@@ -1507,6 +1543,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 minRows={3}
                                                 fullWidth
                                                 sx={{
+                                                    "& .MuiInputLabel-root": {
+                                                        color: theme.secondaryText,
+                                                    },
+                                                    "& .MuiInputLabel-root.Mui-focused": {
+                                                        color: theme.secondaryText,
+                                                    },
                                                     "& .MuiOutlinedInput-root": {
                                                         color: theme.primaryText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
@@ -1522,16 +1564,11 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderWidth: "2px",
                                                         },
                                                     },
-                                                    "& .MuiInputBase-input::placeholder": {
-                                                        color: theme.secondaryText,
-                                                        opacity: 1,
-                                                    },
                                                 }}
                                             />
                                         </Box>
                                     </Box>
 
-                                    {/* Moments in Pictures */}
                                     <Box>
                                         <Typography
                                             sx={{
@@ -1557,6 +1594,7 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                         <Button
                                             component="label"
                                             variant="outlined"
+                                            fullWidth
                                             sx={{
                                                 color: theme.primaryText,
                                                 borderColor: theme.cardBorder,
