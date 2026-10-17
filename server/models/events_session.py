@@ -46,6 +46,23 @@ class EventSession(db.Model):
         nullable=False
     )
 
+    session_type = db.Column(db.String(50), nullable=True)
+
+    attendees = db.Column(db.Integer, nullable=True)
+    total_students = db.Column(db.Integer, nullable=True)
+    tasks_completed = db.Column(db.Integer, nullable=True)
+    total_tasks = db.Column(db.Integer, nullable=True)
+    active_participants = db.Column(db.Integer, nullable=True)
+
+    engagement_score = db.Column(db.Float, nullable=True)
+    attendance_rate = db.Column(db.Float, nullable=True)
+    task_completion_rate = db.Column(db.Float, nullable=True)
+
+    top_performers = db.Column(db.Text, nullable=True)
+    overall_pass_rate = db.Column(db.Float, nullable=True)
+    special_recognition = db.Column(db.Text, nullable=True)
+    key_takeaways = db.Column(db.Text, nullable=True)
+
     event = db.relationship(
         "Events",
         back_populates="sessions"

@@ -6,8 +6,77 @@ from config.database import db
 from models.events import Events
 from models.events_session import EventSession
 from models.trainer import Trainer
+from models.session_task import SessionTask
+from models.session_photo import SessionPhoto
 
 event_sessions_crud = Blueprint("event_sessions_crud", __name__)
+
+def save_session_report(session, data):
+    fields = [
+        "session_type",
+        "attendees",
+        "total_students",
+        "tasks_completed",
+        "total_tasks",
+        "active_participants",
+        "engagement_score",
+        "attendance_rate",
+        "task_completion_rate",
+        "top_performers",
+        "overall_pass_rate",
+        "special_recognition",
+        "key_takeaways",
+    ]
+
+    for field in fields:
+        if field in data:
+            setattr(session, field, data[field])
+
+    if "tasks" in data:
+        if not isinstance(data["tasks"], list):
+            raise ValueError("Tasks must be a list")
+
+        session.task_records.clear()
+
+        for task in data["tasks"]:
+            if not isinstance(task, dict):
+                raise ValueError("Each task must be an object")
+
+            session.task_records.append(
+                SessionTask(
+                    task_name=task.get("task_name"),
+                    task_details=task.get("task_details"),
+                    completion_rate=task.get("completion_rate"),
+                    top_result=task.get("top_result"),
+                )
+            )
+
+    # Add newly uploaded photos
+    if "session_photos" in data:
+        if not isinstance(data["session_photos"], list):
+            raise ValueError("Session photos must be a list")
+
+        for photo in data["session_photos"]:
+            if not isinstance(photo, dict):
+                raise ValueError("Each photo must be an object")
+
+            name = photo.get("name")
+            photo_type = photo.get("type")
+            photo_data = photo.get("data")
+
+            if not all(
+                isinstance(value, str) and value
+                for value in (name, photo_type, photo_data)
+            ):
+                raise ValueError("Photo name, type and data are required")
+
+            session.photo_records.append(
+                SessionPhoto(
+                    photo_name=name,
+                    photo_type=photo_type,
+                    photo_data=photo_data,
+                )
+            )
 
 def session_to_dict(session):
     return {
@@ -35,7 +104,41 @@ def session_to_dict(session):
         "created_at": (
             session.created_at.isoformat()
             if session.created_at else None
-        )
+        ),
+        "session_type": session.session_type,
+        "attendees": session.attendees,
+        "total_students": session.total_students,
+        "tasks_completed": session.tasks_completed,
+        "total_tasks": session.total_tasks,
+        "active_participants": session.active_participants,
+        "engagement_score": session.engagement_score,
+        "attendance_rate": session.attendance_rate,
+        "task_completion_rate": session.task_completion_rate,
+        "top_performers": session.top_performers,
+        "overall_pass_rate": session.overall_pass_rate,
+        "special_recognition": session.special_recognition,
+        "key_takeaways": session.key_takeaways,
+
+        "tasks": [
+            {
+                "id": task.id,
+                "task_name": task.task_name,
+                "task_details": task.task_details,
+                "completion_rate": task.completion_rate,
+                "top_result": task.top_result,
+            }
+            for task in session.task_records
+        ],
+
+        "session_photos": [
+            {
+                "id": photo.id,
+                "name": photo.photo_name,
+                "type": photo.photo_type,
+                "data": photo.photo_data,
+            }
+            for photo in session.photo_records
+        ],
     }
 
 def parse_date(value):
@@ -163,6 +266,7 @@ def create_event_session(event_id):
     )
 
     try:
+        save_session_report(session, data)
         db.session.add(session)
         db.session.commit()
 
@@ -170,6 +274,10 @@ def create_event_session(event_id):
             "message": "Event session created successfully",
             "session": session_to_dict(session)
         }), 201
+    
+    except ValueError as exc:
+        db.session.rollback()
+        return jsonify({"message": str(exc)}), 400
 
     except IntegrityError:
         db.session.rollback()
@@ -299,12 +407,17 @@ def edit_event_session(session_id):
     session.trainer_id = trainer.id
 
     try:
+        save_session_report(session, data)
         db.session.commit()
 
         return jsonify({
             "message": "Event session updated successfully",
             "session": session_to_dict(session)
         }), 200
+    
+    except ValueError as exc:
+        db.session.rollback()
+        return jsonify({"message": str(exc)}), 400
 
     except IntegrityError:
         db.session.rollback()

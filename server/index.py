@@ -55,6 +55,8 @@ from models.college import College
 from models.department import Department
 from models.events import Events
 from models.events_session import EventSession
+from models.session_task import SessionTask
+from models.session_photo import SessionPhoto
 
 with app.app_context():
     db.create_all()

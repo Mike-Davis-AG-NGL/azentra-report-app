@@ -82,9 +82,29 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
             : "";
 
     const calculatedOverallPassRate =
-        Number(totalStudents) > 0 && attendees !== ""
-            ? ((Number(attendees) / Number(totalStudents)) * 100).toFixed(2)
+        calculatedAttendanceRate !== "" &&
+            calculatedTaskCompletionRate !== "" &&
+            engagementScore !== ""
+            ? (
+                (
+                    Number(calculatedAttendanceRate) +
+                    Number(calculatedTaskCompletionRate) +
+                    (Number(engagementScore) / 10) * 100
+                ) / 3
+            ).toFixed(2)
             : "";
+
+    useEffect(() => {
+        setAttendanceRate(calculatedAttendanceRate);
+    }, [calculatedAttendanceRate]);
+
+    useEffect(() => {
+        setTaskCompletionRate(calculatedTaskCompletionRate);
+    }, [calculatedTaskCompletionRate]);
+
+    useEffect(() => {
+        setOverallPassRate(calculatedOverallPassRate);
+    }, [calculatedOverallPassRate]);
 
     useEffect(() => {
         if (session) {
