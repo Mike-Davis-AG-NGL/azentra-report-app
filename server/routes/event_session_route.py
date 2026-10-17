@@ -61,43 +61,58 @@ def parse_time(value):
 
 def validate_session(event, session_date, start_time, end_time, trainer_id):
     if not session_date:
-        return jsonify({
-            "message": "Session date is required and must use YYYY-MM-DD format"
-        }), 400
+        return None, (
+            jsonify({
+                "message": "Session date is required and must use YYYY-MM-DD format"
+            }), 400
+        )
 
     if session_date < event.start_date or session_date > event.end_date:
-        return jsonify({
-            "message": "Session date must be within the event start and end dates"
-        }), 400
+        return None, (
+            jsonify({
+                "message": "Session date must be within the event start and end dates"
+            }), 400
+        )
 
     if not start_time:
-        return jsonify({
-            "message": "Start time is required and must use HH:MM or HH:MM:SS format"
-        }), 400
+        return None, (
+            jsonify({
+                "message": "Start time is required and must use HH:MM or HH:MM:SS format"
+            }), 400
+        )
 
     if not end_time:
-        return jsonify({
-            "message": "End time is required and must use HH:MM or HH:MM:SS format"
-        }), 400
+        return None, (
+            jsonify({
+                "message": "End time is required and must use HH:MM or HH:MM:SS format"
+            }), 400
+        )
 
     if end_time <= start_time:
-        return jsonify({
-            "message": "End time must be later than start time"
-        }), 400
+        return None, (
+            jsonify({
+                "message": "End time must be later than start time"
+            }), 400
+        )
 
     if not isinstance(trainer_id, int) or isinstance(trainer_id, bool):
-        return jsonify({
-            "message": "Trainer ID must be an integer"
-        }), 400
+        return None, (
+            jsonify({
+                "message": "Trainer ID must be an integer"
+            }), 400
+        )
 
     trainer = db.session.get(Trainer, trainer_id)
 
     if not trainer:
-        return jsonify({
-            "message": "Trainer not found"
-        }), 404
+        return None, (
+            jsonify({
+                "message": "Trainer not found"
+            }), 404
+        )
 
     return trainer, None
+
 
 @event_sessions_crud.post("/create/<int:event_id>")
 def create_event_session(event_id):

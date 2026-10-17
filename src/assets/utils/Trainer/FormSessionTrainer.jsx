@@ -1,27 +1,9 @@
-
 import { useEffect, useState } from "react";
-import {
-    Alert,
-    Box,
-    Card,
-    CardActions,
-    CardContent,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    Select,
-    Snackbar,
-    TextField,
-    Typography,
-    Button,
-} from "@mui/material";
+import { Alert, Box, Card, CardActions, CardContent, FormControl, Grid, InputLabel, MenuItem, Select, Snackbar, TextField, Typography, Button, } from "@mui/material";
 import { Add, DeleteOutline } from "@mui/icons-material";
 import { UseTheme } from "../../Controllers/UseTheme";
 import { ButtonX } from "../ButtonX";
 import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/event/sessions";
 
 const emptyTask = () => ({
     task_name: "",
@@ -71,30 +53,38 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const collegeName =
-        event?.college_name ||
-        event?.college?.college_name ||
-        "";
+    const collegeName = event?.college_name || event?.college?.college_name || "";
 
     const eventStartDate = event?.start_date?.slice(0, 10) || "";
     const eventEndDate = event?.end_date?.slice(0, 10) || "";
 
-    const trainerName = trainer
-        ? [trainer.fname, trainer.lname].filter(Boolean).join(" ")
-        : "";
+    const trainerName = trainer ? [trainer.fname, trainer.lname].filter(Boolean).join(" ") : "";
 
     const durationMinutes = (() => {
         if (!startTime || !endTime) return 0;
-
         const [sh, sm] = startTime.split(":").map(Number);
         const [eh, em] = endTime.split(":").map(Number);
-
         return eh * 60 + em - (sh * 60 + sm);
     })();
 
     const duration = durationMinutes > 0
         ? `${Math.floor(durationMinutes / 60) ? `${Math.floor(durationMinutes / 60)} hour${Math.floor(durationMinutes / 60) !== 1 ? "s" : ""}` : ""}${Math.floor(durationMinutes / 60) && durationMinutes % 60 ? " " : ""}${durationMinutes % 60 ? `${durationMinutes % 60} minutes` : ""}`
         : "";
+
+    const calculatedAttendanceRate =
+        Number(totalStudents) > 0 && activeParticipants !== ""
+            ? ((Number(activeParticipants) / Number(totalStudents)) * 100).toFixed(2)
+            : "";
+
+    const calculatedTaskCompletionRate =
+        Number(totalTasks) > 0 && tasksCompleted !== ""
+            ? ((Number(tasksCompleted) / Number(totalTasks)) * 100).toFixed(2)
+            : "";
+
+    const calculatedOverallPassRate =
+        Number(totalStudents) > 0 && attendees !== ""
+            ? ((Number(attendees) / Number(totalStudents)) * 100).toFixed(2)
+            : "";
 
     useEffect(() => {
         if (session) {
@@ -227,10 +217,7 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
             return;
         }
 
-        if (
-            (eventStartDate && sessionDate < eventStartDate) ||
-            (eventEndDate && sessionDate > eventEndDate)
-        ) {
+        if ((eventStartDate && sessionDate < eventStartDate) || (eventEndDate && sessionDate > eventEndDate)) {
             setError("Session date must be within the event dates.");
             setSuccess("");
             setOpenSnackbar(true);
@@ -263,11 +250,7 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
         }
 
         const validTasks = tasks.filter(
-            (task) =>
-                task.task_name.trim() ||
-                task.task_details.trim() ||
-                task.completion_rate !== "" ||
-                task.top_result.trim()
+            (task) => task.task_name.trim() || task.task_details.trim() || task.completion_rate !== "" || task.top_result.trim()
         );
 
         for (const task of validTasks) {
@@ -321,81 +304,59 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                 )
             );
 
+            if (!Number.isInteger(Number(trainer?.id))) {
+                setError("Trainer information is unavailable. Please log in again.");
+                setOpenSnackbar(true);
+                return;
+            }
+
             const payload = {
                 event_id: Number(event.id),
+                trainer_id: Number(trainer.id),
                 session_title: sessionTitle.trim(),
                 session_details: sessionDetails.trim(),
                 session_date: sessionDate,
                 start_time: startTime,
                 end_time: endTime,
-
                 session_type: sessionType,
                 duration,
                 college_name: collegeName,
                 trainer_names: trainerNames.trim(),
                 attendees: attendees === "" ? null : Number(attendees),
-
-                total_students:
-                    totalStudents === "" ? null : Number(totalStudents),
-                tasks_completed:
-                    tasksCompleted === "" ? null : Number(tasksCompleted),
+                total_students: totalStudents === "" ? null : Number(totalStudents),
+                tasks_completed: tasksCompleted === "" ? null : Number(tasksCompleted),
                 total_tasks: totalTasks === "" ? null : Number(totalTasks),
-                active_participants:
-                    activeParticipants === "" ? null : Number(activeParticipants),
-                engagement_score:
-                    engagementScore === "" ? null : Number(engagementScore),
-                attendance_rate:
-                    attendanceRate === "" ? null : Number(attendanceRate),
-                task_completion_rate:
-                    taskCompletionRate === "" ? null : Number(taskCompletionRate),
-
+                active_participants: activeParticipants === "" ? null : Number(activeParticipants),
+                engagement_score: engagementScore === "" ? null : Number(engagementScore),
+                attendance_rate: calculatedAttendanceRate === "" ? null : Number(calculatedAttendanceRate),
+                task_completion_rate: calculatedTaskCompletionRate === "" ? null : Number(calculatedTaskCompletionRate),
                 tasks: validTasks.map((task) => ({
                     task_name: task.task_name.trim(),
                     task_details: task.task_details.trim(),
-                    completion_rate:
-                        task.completion_rate === ""
-                            ? null
-                            : Number(task.completion_rate),
+                    completion_rate: task.completion_rate === "" ? null : Number(task.completion_rate),
                     top_result: task.top_result.trim(),
                 })),
-
                 top_performers: topPerformers.trim(),
-                overall_pass_rate:
-                    overallPassRate === "" ? null : Number(overallPassRate),
+                overall_pass_rate: calculatedOverallPassRate === "" ? null : Number(calculatedOverallPassRate),
                 special_recognition: specialRecognition.trim(),
                 key_takeaways: keyTakeaways.trim(),
                 session_photos: encodedPhotos,
             };
 
             const response = session?.id
-                ? await axios.patch(
-                    `${API_URL}/update/${session.id}`,
-                    payload,
-                    config
-                )
-                : await axios.post(
-                    `${API_URL}/create/${event.id}`,
-                    payload,
-                    config
-                );
+                ? await axios.patch(`http://localhost:5000/api/events/sessions/update/${session.id}`, payload, config)
+                : await axios.post(`http://localhost:5000/api/events/sessions/create/${event.id}`, payload, config);
 
             setSuccess(
-                response.data.message ||
-                (session?.id
-                    ? "Session updated successfully."
-                    : "Session created successfully.")
+                response.data.message || (session?.id ? "Session updated successfully." : "Session created successfully.")
             );
             setOpenSnackbar(true);
-
             await onUpdated?.();
-
             setTimeout(() => onClose?.(), 1200);
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                (session?.id
-                    ? "Failed to update session."
-                    : "Failed to create session.")
+                (session?.id ? "Failed to update session." : "Failed to create session.")
             );
             setSuccess("");
             setOpenSnackbar(true);
@@ -412,15 +373,9 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                         <Card
                             variant="outlined"
                             sx={{
-                                width: { lg: 650, md: 600, sm: 500, xs: "90vw", },
-                                maxHeight: "90dvh",
-                                overflowY: "auto",
-                                bgcolor: theme.cardBg,
-                                border: `solid 2px ${theme.cardBorder}`,
-                                borderRadius: 3,
-                                boxShadow: `0px 0px 8px 10px ${theme.shadow}`,
-                                scrollbarWidth: "thin",
-                                scrollbarColor: "transparent transparent",
+                                width: { lg: 650, md: 600, sm: 500, xs: "90vw", }, maxHeight: "90dvh", overflowY: "auto",
+                                bgcolor: theme.cardBg, border: `solid 2px ${theme.cardBorder}`, borderRadius: 3,
+                                boxShadow: `0px 0px 8px 10px ${theme.shadow}`, scrollbarWidth: "thin", scrollbarColor: "transparent transparent",
                                 "&::-webkit-scrollbar": {
                                     width: "6px",
                                 },
@@ -437,50 +392,17 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                             }}
                         >
                             <CardContent sx={{ p: 3 }}>
-                                <Typography
-                                    sx={{
-                                        color: theme.primaryText,
-                                        fontWeight: "bolder",
-                                        fontSize: 20,
-                                        textAlign: "center",
-                                        mb: 3,
-                                    }}
-                                >
-                                    {session?.id
-                                        ? "Edit Session Details"
-                                        : "Add Session Details"}
+                                <Typography sx={{ color: theme.primaryText, fontWeight: "bolder", fontSize: 20, textAlign: "center", mb: 3, }}>
+                                    {session?.id ? "Edit Session Details" : "Add Session Details"}
                                 </Typography>
 
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: 3,
-                                    }}
-                                >
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 3, }}>
                                     <Box>
-                                        <Typography
-                                            sx={{
-                                                color: theme.primaryText,
-                                                fontWeight: "bold",
-                                                mb: 2,
-                                            }}
-                                        >
+                                        <Typography sx={{ color: theme.primaryText, fontWeight: "bold", mb: 2, }}>
                                             Event at a Glance
                                         </Typography>
-
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: 2,
-                                            }}
-                                        >
-                                            <TextField
-                                                label="College Name"
-                                                value={collegeName}
-                                                fullWidth
-                                                disabled
+                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, }}>
+                                            <TextField label="College Name" value={collegeName} fullWidth disabled
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.mutedText,
@@ -504,14 +426,8 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                         },
                                                     },
                                                 }} />
-                                            <TextField
-                                                label="Session Title"
-                                                value={sessionTitle}
-                                                onChange={(e) =>
-                                                    setSessionTitle(e.target.value)
-                                                }
-                                                required
-                                                fullWidth
+                                            <TextField label="Session Title" value={sessionTitle} required
+                                                onChange={(e) => setSessionTitle(e.target.value)} fullWidth
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -537,22 +453,15 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 }} />
                                             <Grid container spacing={2}>
                                                 <Grid size={12}>
-                                                    <TextField
-                                                        label="Date of Session"
-                                                        type="date"
-                                                        value={sessionDate}
-                                                        onChange={(e) =>
-                                                            setSessionDate(e.target.value)
-                                                        }
+                                                    <TextField label="Date of Session" type="date"
+                                                        value={sessionDate} onChange={(e) => setSessionDate(e.target.value)}
                                                         slotProps={{
                                                             inputLabel: { shrink: true },
                                                             htmlInput: {
                                                                 min: eventStartDate || undefined,
                                                                 max: eventEndDate || undefined,
                                                             },
-                                                        }}
-                                                        required
-                                                        fullWidth
+                                                        }} required fullWidth
                                                         sx={{
                                                             "& .MuiOutlinedInput-root": {
                                                                 color: theme.primaryText,
@@ -588,18 +497,11 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 </Grid>
 
                                                 <Grid size={{ xs: 12, sm: 6 }}>
-                                                    <TextField
-                                                        label="Start Time"
-                                                        type="time"
-                                                        value={startTime}
-                                                        onChange={(e) =>
-                                                            setStartTime(e.target.value)
-                                                        }
+                                                    <TextField label="Start Time" type="time" value={startTime}
+                                                        onChange={(e) => setStartTime(e.target.value)}
                                                         slotProps={{
                                                             inputLabel: { shrink: true },
-                                                        }}
-                                                        required
-                                                        fullWidth
+                                                        }} required fullWidth
                                                         sx={{
                                                             "& .MuiOutlinedInput-root": {
                                                                 color: theme.primaryText,
@@ -636,18 +538,11 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 </Grid>
 
                                                 <Grid size={{ xs: 12, sm: 6 }}>
-                                                    <TextField
-                                                        label="End Time"
-                                                        type="time"
-                                                        value={endTime}
-                                                        onChange={(e) =>
-                                                            setEndTime(e.target.value)
-                                                        }
+                                                    <TextField label="End Time" type="time" value={endTime}
+                                                        onChange={(e) => setEndTime(e.target.value)}
                                                         slotProps={{
                                                             inputLabel: { shrink: true },
-                                                        }}
-                                                        required
-                                                        fullWidth
+                                                        }} required fullWidth
                                                         sx={{
                                                             "& .MuiOutlinedInput-root": {
                                                                 color: theme.primaryText,
@@ -691,12 +586,8 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                         color: theme.primaryAccent,
                                                     },
                                                 }}>Session Type</InputLabel>
-                                                <Select
-                                                    label="Session Type"
-                                                    value={sessionType}
-                                                    onChange={(e) =>
-                                                        setSessionType(e.target.value)
-                                                    }
+                                                <Select label="Session Type" value={sessionType}
+                                                    onChange={(e) => setSessionType(e.target.value)}
                                                     MenuProps={{
                                                         PaperProps: {
                                                             sx: {
@@ -735,32 +626,16 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                         },
                                                     }}
                                                 >
-                                                    <MenuItem value="Orientation">
-                                                        Orientation
-                                                    </MenuItem>
-                                                    <MenuItem value="Workshop">
-                                                        Workshop
-                                                    </MenuItem>
-                                                    <MenuItem value="Seminar">
-                                                        Seminar
-                                                    </MenuItem>
-                                                    <MenuItem value="Course">
-                                                        Course
-                                                    </MenuItem>
+                                                    <MenuItem value="Orientation">Orientation</MenuItem>
+                                                    <MenuItem value="Workshop">Workshop</MenuItem>
+                                                    <MenuItem value="Seminar">Seminar</MenuItem>
+                                                    <MenuItem value="Course">Course</MenuItem>
                                                 </Select>
                                             </FormControl>
 
-                                            <TextField
-                                                label="Attendees (students and faculty)"
-                                                type="number"
-                                                value={attendees}
-                                                onChange={(e) =>
-                                                    setAttendees(e.target.value)
-                                                }
-                                                slotProps={{
-                                                    htmlInput: { min: 0 },
-                                                }}
-                                                fullWidth
+                                            <TextField label="Attendees (students and faculty)" type="number" value={attendees}
+                                                onChange={(e) => setAttendees(e.target.value)}
+                                                slotProps={{ htmlInput: { min: 0 } }} fullWidth
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -786,47 +661,34 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                 }}
                                             />
 
-                                            <TextField
-                                                label="Azentra Trainer(s)"
-                                                value={trainerNames}
-                                                onChange={(e) =>
-                                                    setTrainerNames(e.target.value)
-                                                }
-                                                fullWidth
+                                            <TextField label="Azentra Trainer(s)" value={trainerNames}
+                                                onChange={(e) => setTrainerNames(e.target.value)} fullWidth disabled
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
-                                                        color: theme.secondaryText,
+                                                        color: theme.mutedText,
                                                     },
-                                                    "& .MuiInputLabel-root.Mui-focused": {
-                                                        color: theme.secondaryText,
+                                                    "& .MuiInputLabel-root.Mui-disabled": {
+                                                        color: theme.mutedText,
                                                     },
                                                     "& .MuiOutlinedInput-root": {
-                                                        color: theme.primaryText,
+                                                        color: theme.mutedText,
                                                         "& .MuiOutlinedInput-notchedOutline": {
-                                                            borderColor: theme.primaryAccent,
+                                                            borderColor: theme.mutedText,
                                                             borderWidth: "2px",
                                                         },
-                                                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                                                            borderColor: theme.primaryAccent,
+                                                        "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                                                            borderColor: theme.mutedText,
                                                             borderWidth: "2px",
                                                         },
-                                                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                                            borderColor: theme.primaryAccent,
-                                                            borderWidth: "2px",
+                                                        "& .MuiInputBase-input.Mui-disabled": {
+                                                            WebkitTextFillColor: theme.mutedText,
+                                                            color: theme.mutedText,
                                                         },
                                                     },
-                                                }}
-                                            />
+                                                }} />
 
-                                            <TextField
-                                                label="Session Highlights / Description"
-                                                value={sessionDetails}
-                                                onChange={(e) =>
-                                                    setSessionDetails(e.target.value)
-                                                }
-                                                multiline
-                                                minRows={3}
-                                                fullWidth
+                                            <TextField label="Session Highlights / Description" value={sessionDetails} fullWidth
+                                                onChange={(e) => setSessionDetails(e.target.value)} multiline minRows={3}
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -853,28 +715,15 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                             />
                                         </Box>
                                     </Box>
-
-                                    {/* Student Engagement Snapshot */}
                                     <Box>
-                                        <Typography
-                                            sx={{
-                                                color: theme.primaryText,
-                                                fontWeight: "bold",
-                                                mb: 2,
-                                            }}
-                                        >
+                                        <Typography sx={{ color: theme.primaryText, fontWeight: "bold", mb: 2 }}>
                                             Student Engagement Snapshot
                                         </Typography>
 
                                         <Grid container spacing={2}>
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Total Students"
-                                                    type="number"
-                                                    value={totalStudents}
-                                                    onChange={(e) =>
-                                                        setTotalStudents(e.target.value)
-                                                    }
+                                                <TextField label="Total Students" type="number" value={totalStudents}
+                                                    onChange={(e) => setTotalStudents(e.target.value)}
                                                     slotProps={{
                                                         htmlInput: { min: 0 },
                                                     }}
@@ -901,22 +750,14 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderWidth: "2px",
                                                             },
                                                         },
-                                                    }}
-                                                />
+                                                    }} />
                                             </Grid>
-
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Active Participants"
-                                                    type="number"
-                                                    value={activeParticipants}
-                                                    onChange={(e) =>
-                                                        setActiveParticipants(e.target.value)
-                                                    }
+                                                <TextField label="Active Participants" type="number" value={activeParticipants}
+                                                    onChange={(e) => setActiveParticipants(e.target.value)} fullWidth
                                                     slotProps={{
                                                         htmlInput: { min: 0 },
                                                     }}
-                                                    fullWidth
                                                     sx={{
                                                         "& .MuiInputLabel-root": {
                                                             color: theme.secondaryText,
@@ -942,19 +783,12 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     }}
                                                 />
                                             </Grid>
-
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Tasks Completed"
-                                                    type="number"
-                                                    value={tasksCompleted}
-                                                    onChange={(e) =>
-                                                        setTasksCompleted(e.target.value)
-                                                    }
+                                                <TextField label="Tasks Completed" type="number" value={tasksCompleted}
+                                                    onChange={(e) => setTasksCompleted(e.target.value)} fullWidth
                                                     slotProps={{
                                                         htmlInput: { min: 0 },
                                                     }}
-                                                    fullWidth
                                                     sx={{
                                                         "& .MuiInputLabel-root": {
                                                             color: theme.secondaryText,
@@ -977,22 +811,14 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderWidth: "2px",
                                                             },
                                                         },
-                                                    }}
-                                                />
+                                                    }} />
                                             </Grid>
-
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Total Tasks"
-                                                    type="number"
-                                                    value={totalTasks}
-                                                    onChange={(e) =>
-                                                        setTotalTasks(e.target.value)
-                                                    }
+                                                <TextField label="Total Tasks" type="number" value={totalTasks}
+                                                    onChange={(e) => setTotalTasks(e.target.value)} fullWidth
                                                     slotProps={{
                                                         htmlInput: { min: 0 },
                                                     }}
-                                                    fullWidth
                                                     sx={{
                                                         "& .MuiInputLabel-root": {
                                                             color: theme.secondaryText,
@@ -1015,18 +841,11 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderWidth: "2px",
                                                             },
                                                         },
-                                                    }}
-                                                />
+                                                    }} />
                                             </Grid>
-
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Average Engagement Score (1–10)"
-                                                    type="number"
-                                                    value={engagementScore}
-                                                    onChange={(e) =>
-                                                        setEngagementScore(e.target.value)
-                                                    }
+                                                <TextField label="Average Engagement Score (1–10)" type="number" value={engagementScore}
+                                                    onChange={(e) => setEngagementScore(e.target.value)} fullWidth
                                                     slotProps={{
                                                         htmlInput: {
                                                             min: 1,
@@ -1034,7 +853,6 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             step: 0.1,
                                                         },
                                                     }}
-                                                    fullWidth
                                                     sx={{
                                                         "& .MuiInputLabel-root": {
                                                             color: theme.secondaryText,
@@ -1057,25 +875,13 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderWidth: "2px",
                                                             },
                                                         },
-                                                    }}
-                                                />
+                                                    }} />
                                             </Grid>
-
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Attendance Rate (%)"
-                                                    type="number"
-                                                    value={attendanceRate}
-                                                    onChange={(e) =>
-                                                        setAttendanceRate(e.target.value)
-                                                    }
+                                                <TextField label="Attendance Rate (%)" type="number" value={calculatedAttendanceRate} fullWidth
                                                     slotProps={{
-                                                        htmlInput: {
-                                                            min: 0,
-                                                            max: 100,
-                                                        },
+                                                        htmlInput: { min: 0, max: 100, readOnly: true }
                                                     }}
-                                                    fullWidth
                                                     sx={{
                                                         "& .MuiInputLabel-root": {
                                                             color: theme.secondaryText,
@@ -1098,25 +904,13 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderWidth: "2px",
                                                             },
                                                         },
-                                                    }}
-                                                />
+                                                    }} />
                                             </Grid>
-
                                             <Grid size={{ xs: 12, sm: 6 }}>
-                                                <TextField
-                                                    label="Task Completion Rate (%)"
-                                                    type="number"
-                                                    value={taskCompletionRate}
-                                                    onChange={(e) =>
-                                                        setTaskCompletionRate(e.target.value)
-                                                    }
+                                                <TextField label="Task Completion Rate (%)" type="number" value={calculatedTaskCompletionRate} fullWidth
                                                     slotProps={{
-                                                        htmlInput: {
-                                                            min: 0,
-                                                            max: 100,
-                                                        },
+                                                        htmlInput: { min: 0, max: 100, readOnly: true }
                                                     }}
-                                                    fullWidth
                                                     sx={{
                                                         "& .MuiInputLabel-root": {
                                                             color: theme.secondaryText,
@@ -1139,116 +933,38 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                 borderWidth: "2px",
                                                             },
                                                         },
-                                                    }}
-                                                />
+                                                    }} />
                                             </Grid>
                                         </Grid>
                                     </Box>
-
-                                    {/* Tasks & Activities */}
                                     <Box>
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
-                                                mb: 2,
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    color: theme.primaryText,
-                                                    fontWeight: "bold",
-                                                }}
-                                            >
+                                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, }}>
+                                            <Typography sx={{ color: theme.primaryText, fontWeight: "bold", }}>
                                                 Tasks & Activities / Results & Outcomes
                                             </Typography>
-
-                                            <Button
-                                                startIcon={<Add />}
-                                                onClick={() =>
-                                                    setTasks((current) => [
-                                                        ...current,
-                                                        emptyTask(),
-                                                    ])
-                                                }
-                                                sx={{ color: theme.primaryText }}
-                                            >
-                                                Add Task
-                                            </Button>
+                                            <Button startIcon={<Add />} sx={{ color: theme.primaryText }}
+                                                onClick={() => setTasks((current) => [...current, emptyTask(),])}
+                                            >Add Task</Button>
                                         </Box>
-
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: 2,
-                                            }}
-                                        >
+                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, }}>
                                             {tasks.map((task, index) => (
-                                                <Card
-                                                    key={index}
-                                                    variant="outlined"
-                                                    sx={{
-                                                        bgcolor: theme.background,
-                                                        borderColor: theme.cardBorder,
-                                                        borderRadius: 2,
-                                                    }}
+                                                <Card key={index} variant="outlined"
+                                                    sx={{ bgcolor: theme.background, borderColor: theme.cardBorder, borderRadius: 2, }}
                                                 >
                                                     <CardContent>
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                justifyContent: "space-between",
-                                                                alignItems: "center",
-                                                                mb: 2,
-                                                            }}
-                                                        >
-                                                            <Typography
-                                                                sx={{
-                                                                    color: theme.primaryText,
-                                                                    fontWeight: "bold",
-                                                                }}
-                                                            >
+                                                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, }}>
+                                                            <Typography sx={{ color: theme.primaryText, fontWeight: "bold", }}>
                                                                 Task {index + 1}
                                                             </Typography>
-
                                                             {tasks.length > 1 && (
-                                                                <Button
-                                                                    color="error"
-                                                                    size="small"
-                                                                    startIcon={<DeleteOutline />}
-                                                                    onClick={() =>
-                                                                        setTasks((current) =>
-                                                                            current.filter(
-                                                                                (_, i) => i !== index
-                                                                            )
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Remove
-                                                                </Button>
+                                                                <Button color="error" size="small" startIcon={<DeleteOutline />}
+                                                                    onClick={() => setTasks((current) => current.filter((_, i) => i !== index))}
+                                                                >Remove</Button>
                                                             )}
                                                         </Box>
-
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                flexDirection: "column",
-                                                                gap: 2,
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                label="Task / Activity Name"
-                                                                value={task.task_name}
-                                                                onChange={(e) =>
-                                                                    updateTask(
-                                                                        index,
-                                                                        "task_name",
-                                                                        e.target.value
-                                                                    )
-                                                                }
-                                                                fullWidth
+                                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, }}>
+                                                            <TextField label="Task / Activity Name" value={task.task_name} fullWidth
+                                                                onChange={(e) => updateTask(index, "task_name", e.target.value)}
                                                                 sx={{
                                                                     "& .MuiInputLabel-root": {
                                                                         color: theme.secondaryText,
@@ -1271,22 +987,10 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderWidth: "2px",
                                                                         },
                                                                     },
-                                                                }}
-                                                            />
-
-                                                            <TextField
-                                                                label="Task Details / Activity Description"
-                                                                value={task.task_details}
-                                                                onChange={(e) =>
-                                                                    updateTask(
-                                                                        index,
-                                                                        "task_details",
-                                                                        e.target.value
-                                                                    )
-                                                                }
-                                                                multiline
-                                                                minRows={2}
-                                                                fullWidth
+                                                                }} />
+                                                            <TextField label="Task Details / Activity Description" value={task.task_details}
+                                                                onChange={(e) => updateTask(index, "task_details", e.target.value)} multiline
+                                                                minRows={2} fullWidth
                                                                 sx={{
                                                                     "& .MuiInputLabel-root": {
                                                                         color: theme.secondaryText,
@@ -1309,27 +1013,15 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderWidth: "2px",
                                                                         },
                                                                     },
-                                                                }}
-                                                            />
-
-                                                            <TextField
-                                                                label="Completion Rate (%)"
-                                                                type="number"
-                                                                value={task.completion_rate}
-                                                                onChange={(e) =>
-                                                                    updateTask(
-                                                                        index,
-                                                                        "completion_rate",
-                                                                        e.target.value
-                                                                    )
-                                                                }
+                                                                }} />
+                                                            <TextField label="Completion Rate (%)" type="number" value={task.completion_rate} fullWidth
+                                                                onChange={(e) => updateTask(index, "completion_rate", e.target.value)}
                                                                 slotProps={{
                                                                     htmlInput: {
                                                                         min: 0,
                                                                         max: 100,
                                                                     },
                                                                 }}
-                                                                fullWidth
                                                                 sx={{
                                                                     "& .MuiInputLabel-root": {
                                                                         color: theme.secondaryText,
@@ -1354,19 +1046,8 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                     },
                                                                 }}
                                                             />
-
-                                                            <TextField
-                                                                label="Top Score / Result"
-                                                                value={task.top_result}
-                                                                onChange={(e) =>
-                                                                    updateTask(
-                                                                        index,
-                                                                        "top_result",
-                                                                        e.target.value
-                                                                    )
-                                                                }
-                                                                placeholder="e.g. Top team: 98/100"
-                                                                fullWidth
+                                                            <TextField label="Top Score / Result" value={task.top_result} placeholder="e.g. Top team: 98/100"
+                                                                onChange={(e) => updateTask(index, "top_result", e.target.value)} fullWidth
                                                                 sx={{
                                                                     "& .MuiInputLabel-root": {
                                                                         color: theme.secondaryText,
@@ -1389,32 +1070,16 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                                             borderWidth: "2px",
                                                                         },
                                                                     },
-                                                                }}
-                                                            />
+                                                                }} />
                                                         </Box>
                                                     </CardContent>
                                                 </Card>
                                             ))}
                                         </Box>
-
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: 2,
-                                                mt: 2,
-                                            }}
-                                        >
-                                            <TextField
-                                                label="Top Performer(s)"
-                                                value={topPerformers}
-                                                onChange={(e) =>
-                                                    setTopPerformers(e.target.value)
-                                                }
+                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2, }}>
+                                            <TextField label="Top Performer(s)" value={topPerformers} multiline minRows={2} fullWidth
+                                                onChange={(e) => setTopPerformers(e.target.value)}
                                                 placeholder="Name(s), college/department, or team"
-                                                multiline
-                                                minRows={2}
-                                                fullWidth
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -1437,23 +1102,11 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderWidth: "2px",
                                                         },
                                                     },
-                                                }}
-                                            />
-
-                                            <TextField
-                                                label="Overall Pass Rate (%)"
-                                                type="number"
-                                                value={overallPassRate}
-                                                onChange={(e) =>
-                                                    setOverallPassRate(e.target.value)
-                                                }
+                                                }} />
+                                            <TextField label="Overall Pass Rate (%)" type="number" value={calculatedOverallPassRate}
                                                 slotProps={{
-                                                    htmlInput: {
-                                                        min: 0,
-                                                        max: 100,
-                                                    },
+                                                    htmlInput: { min: 0, max: 100, readOnly: true }
                                                 }}
-                                                fullWidth
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -1478,16 +1131,9 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                     },
                                                 }}
                                             />
-
-                                            <TextField
-                                                label="Special Recognition"
-                                                value={specialRecognition}
-                                                onChange={(e) =>
-                                                    setSpecialRecognition(e.target.value)
-                                                }
-                                                multiline
-                                                minRows={2}
-                                                fullWidth
+                                            <TextField label="Special Recognition" value={specialRecognition}
+                                                onChange={(e) => setSpecialRecognition(e.target.value)}
+                                                multiline minRows={2} fullWidth
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -1510,38 +1156,17 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderWidth: "2px",
                                                         },
                                                     },
-                                                }}
-                                            />
+                                                }} />
                                         </Box>
                                     </Box>
                                     <Box>
-                                        <Typography
-                                            sx={{
-                                                color: theme.primaryText,
-                                                fontWeight: "bold",
-                                                mb: 2,
-                                            }}
-                                        >
+                                        <Typography sx={{ color: theme.primaryText, fontWeight: "bold", mb: 2, }}>
                                             Takeaways
                                         </Typography>
-
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: 2,
-                                            }}
-                                        >
-                                            <TextField
-                                                label="Key Takeaways for the College"
-                                                value={keyTakeaways}
-                                                onChange={(e) =>
-                                                    setKeyTakeaways(e.target.value)
-                                                }
+                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, }}>
+                                            <TextField label="Key Takeaways for the College" value={keyTakeaways}
+                                                onChange={(e) => setKeyTakeaways(e.target.value)} multiline minRows={3} fullWidth
                                                 placeholder="Learning gained, skills demonstrated, next steps, follow-up actions"
-                                                multiline
-                                                minRows={3}
-                                                fullWidth
                                                 sx={{
                                                     "& .MuiInputLabel-root": {
                                                         color: theme.secondaryText,
@@ -1564,153 +1189,59 @@ export const FormSessionTrainer = ({ event, session, trainer, onClose, onUpdated
                                                             borderWidth: "2px",
                                                         },
                                                     },
-                                                }}
-                                            />
+                                                }} />
                                         </Box>
                                     </Box>
-
                                     <Box>
-                                        <Typography
-                                            sx={{
-                                                color: theme.primaryText,
-                                                fontWeight: "bold",
-                                                mb: 1,
-                                            }}
-                                        >
+                                        <Typography sx={{ color: theme.primaryText, fontWeight: "bold", mb: 1, }} >
                                             Moments in Pictures
                                         </Typography>
-
-                                        <Typography
-                                            sx={{
-                                                color: theme.secondaryText,
-                                                fontSize: 13,
-                                                mb: 2,
-                                            }}
-                                        >
+                                        <Typography sx={{ color: theme.secondaryText, fontSize: 13, mb: 2, }}>
                                             Upload session photos for the event report.
                                             JPG, PNG, or WEBP; maximum 5 MB per image.
                                         </Typography>
-
-                                        <Button
-                                            component="label"
-                                            variant="outlined"
-                                            fullWidth
+                                        <Button component="label" variant="outlined" fullWidth
                                             sx={{
-                                                color: theme.primaryText,
-                                                borderColor: theme.cardBorder,
-                                                "&:hover": {
-                                                    borderColor: theme.primaryAccent,
-                                                },
-                                            }}
-                                        >
+                                                color: theme.primaryText, borderColor: theme.cardBorder,
+                                                "&:hover": { borderColor: theme.primaryAccent, }
+                                            }}>
                                             Upload Photos
-                                            <input
-                                                type="file"
-                                                hidden
-                                                multiple
-                                                accept="image/jpeg,image/png,image/webp"
-                                                onChange={handlePhotoChange}
-                                            />
+                                            <input type="file" hidden multiple accept="image/jpeg,image/png,image/webp"
+                                                onChange={handlePhotoChange} />
                                         </Button>
-
                                         {photos.map((photo, index) => (
                                             <Box
                                                 key={`${photo.name}-${index}`}
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "space-between",
-                                                    gap: 1,
-                                                    mt: 1,
-                                                }}
+                                                sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mt: 1, }}
                                             >
-                                                <Typography
-                                                    sx={{
-                                                        color: theme.primaryText,
-                                                        fontSize: 13,
-                                                        overflowWrap: "anywhere",
-                                                    }}
-                                                >
+                                                <Typography sx={{ color: theme.primaryText, fontSize: 13, overflowWrap: "anywhere", }}>
                                                     {photo.name}
                                                 </Typography>
-
-                                                <Button
-                                                    size="small"
-                                                    color="error"
-                                                    onClick={() =>
-                                                        setPhotos((current) =>
-                                                            current.filter(
-                                                                (_, i) => i !== index
-                                                            )
-                                                        )
-                                                    }
-                                                >
+                                                <Button size="small" color="error" onClick={() => setPhotos((current) => current.filter((_, i) => i !== index))}>
                                                     Remove
                                                 </Button>
                                             </Box>
                                         ))}
                                     </Box>
-
-                                    <Typography
-                                        sx={{
-                                            color: theme.secondaryText,
-                                            fontSize: 12,
-                                            textAlign: "center",
-                                        }}
-                                    >
+                                    <Typography sx={{ color: theme.secondaryText, fontSize: 12, textAlign: "center", }}>
                                         Azentra Global — Empowering the next
                                         generation through technology, training,
                                         and transformation.
                                     </Typography>
                                 </Box>
                             </CardContent>
-
-                            <CardActions
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    gap: 1,
-                                    pb: 3,
-                                }}
-                            >
-                                <ButtonX
-                                    name="Cancel"
-                                    onClick={() => {
-                                        if (!loading) onClose?.();
-                                    }}
-                                />
-
-                                <ButtonX
-                                    name={
-                                        loading
-                                            ? "Saving..."
-                                            : session?.id
-                                                ? "Update Session"
-                                                : "Save Session"
-                                    }
-                                    onClick={handleSaveSession}
-                                />
+                            <CardActions sx={{ display: "flex", justifyContent: "center", gap: 1, pb: 3, }}>
+                                <ButtonX name="Cancel" onClick={() => { if (!loading) onClose?.(); }} />
+                                <ButtonX name={loading ? "Saving..." : session?.id ? "Update Session" : "Save Session"}
+                                    onClick={handleSaveSession} />
                             </CardActions>
                         </Card>
                     </Box>
                 </Grid>
             </Grid>
-
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={5000}
-                onClose={handleCloseSnackbar}
-            >
-                <Alert
-                    onClose={handleCloseSnackbar}
-                    variant="filled"
-                    severity={error ? "error" : "success"}
-                    sx={{
-                        backgroundColor: error
-                            ? theme.error
-                            : theme.success,
-                    }}
-                >
+            <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} variant="filled" severity={error ? "error" : "success"}
+                    sx={{ backgroundColor: error ? theme.error : theme.success, }} >
                     {error || success}
                 </Alert>
             </Snackbar>
